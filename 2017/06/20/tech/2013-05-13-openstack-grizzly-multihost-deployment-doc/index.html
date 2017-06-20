@@ -1,0 +1,2137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>OpenStack Grizzly Multihost部署文档 | Allen&#39;s BLOG</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="OpenStack G版本的Multihost部署文档，参考了几位前辈的部署步骤，自己增加了一些变量修改，主要是希望搭建一个可用的生产环境，虽然版本比较初级，但是会逐渐完善">
+<meta name="keywords" content="OpenStack">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenStack Grizzly Multihost部署文档">
+<meta property="og:url" content="http://yoursite.com/2017/06/20/tech/2013-05-13-openstack-grizzly-multihost-deployment-doc/index.html">
+<meta property="og:site_name" content="Allen&#39;s BLOG">
+<meta property="og:description" content="OpenStack G版本的Multihost部署文档，参考了几位前辈的部署步骤，自己增加了一些变量修改，主要是希望搭建一个可用的生产环境，虽然版本比较初级，但是会逐渐完善">
+<meta property="og:updated_time" content="2017-06-20T06:35:12.399Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OpenStack Grizzly Multihost部署文档">
+<meta name="twitter:description" content="OpenStack G版本的Multihost部署文档，参考了几位前辈的部署步骤，自己增加了一些变量修改，主要是希望搭建一个可用的生产环境，虽然版本比较初级，但是会逐渐完善">
+  
+  
+    <link rel="icon" href="/img/avatar.jpg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <link rel="stylesheet" href="/css/hl_theme/darcula.css">
+  
+  <link href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script src="/js/jquery.autocomplete.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad();
+  </script>
+  
+    <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  <script id="dsq-count-scr" src="//yelog.disqus.com/count.js" async></script>
+  
+</head>
+<div style="display: none">
+  <input class="theme_disqus_on" value="true">
+  <input class="theme_duoshuo_on" value="false">
+  <input class="theme_preload_comment" value="false">
+  <input class="theme_duoshuo_domain" value="jaytp">
+</div>
+<body>
+<aside class="nav">
+    <div class="nav-left">
+        <a href="/" class="avatar" style="background-image:url(/img/avatar.jpg)"></a>
+<div class="author">
+    <span>Allen</span>
+</div>
+<div class="icon">
+    
+    <a class="rss" title="rss" href="/atom.xml" target="_blank"></a>
+    
+    
+    <a class="github" title="github" href="https://github.com/yelog" target="_blank"></a>
+    
+    
+    <a class="facebook" title="facebook" href="https://www.facebook.com/faker.tops" target="_blank"></a>
+    
+    
+    
+    <a class="linkedin" title="linkedin" href="https://www.linkedin.com/in/%E7%8E%89%E6%9D%B0-%E6%9D%A8-13a40a103/" target="_blank"></a>
+    
+    
+    
+    <a class="reddit" title="reddit" href="https://www.reddit.com/user/yelog/" target="_blank"></a>
+    
+    
+    <a class="weibo" title="weibo" href="http://weibo.com/u/2307534817" target="_blank"></a>
+    
+    
+    <a class="email" title="email" href="mailto:jaytp@qq.com"></a>
+    
+</div>
+<ul>
+    <li class="all active">全部文章</li>
+    
+    <li data-rel="读书"> 读书 </li>
+    
+    <li data-rel="资源"> 资源 </li>
+    
+    <li data-rel="工具"> 工具 </li>
+    
+    <li data-rel="技术"> 技术 </li>
+    
+</ul>
+<input type="hidden" id="yelog_site_posts_number" value="107">
+
+<div style="display: none">
+    <span id="busuanzi_value_site_uv"></span>
+    <span id="busuanzi_value_site_pv"></span>
+</div>
+    </div>
+    <div class="nav-right">
+        <form onkeydown="if(event.keyCode==13){return false;}">
+    <input class="search" type="text" placeholder="Search..." autocomplete="off">
+    <i class="cross"></i>
+    <span>
+        <label for="tagswitch">Tags:</label>
+        <input id="tagswitch" type="checkbox">
+    </span>
+</form>
+<ul class="tags-list">
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color4">Git</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color5">Bootstrap</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color5">HTML</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color4">PHP</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color2">jQuery</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color1">JavaScript</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color2">Python</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color4">SVN</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color1">MySQL</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color4">Mac</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color1">Shell</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color4">SEO</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color4">Vim</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color3">Windows</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color1">Linux</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color3">Sublime</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color2">Jekyll</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color5">Blog</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color3">MongoDB</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color5">Tool</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color3">Vagrant</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color1">Tools</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color2">Docker</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color5">OpenStack</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color5">Virtualization</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color3">Concept</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color4">CSS</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color2">Apache</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color1">Nginx</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color3">Laravel</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color3">算法</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color1">React</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color3">Pattern</a>
+    </li>
+    
+    <div class="clearfix"></div>
+</ul>
+
+<nav>
+    
+    <a  class=""
+       href="/2017/06/20/hello-world/"
+       data-tag=""
+       data-author="" >
+        <span class="post-title" title="Hello World">Hello World</span>
+        <span class="post-date" title="2017-06-20 15:20:58">2017/06/20</span>
+    </a>
+    
+    <a  class="读书 "
+       href="/2017/06/20/book/2014-03-14-book-list-of-2014/"
+       data-tag=""
+       data-author="" >
+        <span class="post-title" title="2014阅读书单">2014阅读书单</span>
+        <span class="post-date" title="2017-06-20 15:23:40">2017/06/20</span>
+    </a>
+    
+    <a  class="读书 "
+       href="/2017/06/20/book/2013-12-20-book-list-of-2013/"
+       data-tag=""
+       data-author="" >
+        <span class="post-title" title="2013阅读书单">2013阅读书单</span>
+        <span class="post-date" title="2017-06-20 15:23:40">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2014-01-15-general-git-resources/"
+       data-tag="Git"
+       data-author="" >
+        <span class="post-title" title="Git 常用资源">Git 常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2013-04-23-general-bootstrap-resources/"
+       data-tag="Bootstrap"
+       data-author="" >
+        <span class="post-title" title="Bootstrap常用资源">Bootstrap常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2014-01-15-general-html-resources/"
+       data-tag="HTML"
+       data-author="" >
+        <span class="post-title" title="HTML 常用资源">HTML 常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2014-01-15-general-php-resources/"
+       data-tag="PHP"
+       data-author="" >
+        <span class="post-title" title="PHP 常用资源">PHP 常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2014-01-15-general-jquery-resources/"
+       data-tag="jQuery"
+       data-author="" >
+        <span class="post-title" title="jQuery 常用资源">jQuery 常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2014-01-15-general-javascript-resources/"
+       data-tag="JavaScript"
+       data-author="" >
+        <span class="post-title" title="JavaScript 常用资源">JavaScript 常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2014-01-15-general-python-resources/"
+       data-tag="Python"
+       data-author="" >
+        <span class="post-title" title="Python 常用资源">Python 常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2014-01-15-general-svn-resources/"
+       data-tag="SVN"
+       data-author="" >
+        <span class="post-title" title="SVN 常用资源">SVN 常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2014-05-11-general-mysql-resources/"
+       data-tag="MySQL"
+       data-author="" >
+        <span class="post-title" title="MySQL常用资源">MySQL常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2014-08-03-general-mac-resources/"
+       data-tag="Mac"
+       data-author="" >
+        <span class="post-title" title="Mac 常用资源">Mac 常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2014-01-15-general-shell-resources/"
+       data-tag="Shell"
+       data-author="" >
+        <span class="post-title" title="Shell 常用资源">Shell 常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2015-02-13-general-seo-resources/"
+       data-tag="SEO"
+       data-author="" >
+        <span class="post-title" title="SEO 常用资源">SEO 常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2015-10-04-general-vim-resources/"
+       data-tag="Vim"
+       data-author="" >
+        <span class="post-title" title="Vim 常用资源">Vim 常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2012-12-30-share-windows-and-linux/"
+       data-tag="Windows,Linux"
+       data-author="" >
+        <span class="post-title" title="Windows和Linux切换最终解决方案">Windows和Linux切换最终解决方案</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-01-16-create-remote-resp/"
+       data-tag="Git"
+       data-author="" >
+        <span class="post-title" title="git创建远程库">git创建远程库</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-01-09-remote-access-of-mysql/"
+       data-tag="MySQL"
+       data-author="" >
+        <span class="post-title" title="MySQL远程访问">MySQL远程访问</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-02-25-quick-open-in-windows/"
+       data-tag="Windows"
+       data-author="" >
+        <span class="post-title" title="win7快速打开应用程序或文件">win7快速打开应用程序或文件</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-03-25-open-tcp-port-of-libvirt/"
+       data-tag="Linux"
+       data-author="" >
+        <span class="post-title" title="Linux下开启Libvirtd的tcp监控">Linux下开启Libvirtd的tcp监控</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-03-25-tools-of-sever-deployment/"
+       data-tag="Linux"
+       data-author="" >
+        <span class="post-title" title="服务器自动化部署及运维常见工具">服务器自动化部署及运维常见工具</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-04-21-add-snippet/"
+       data-tag="Sublime"
+       data-author="" >
+        <span class="post-title" title="给sublime增加snippet">给sublime增加snippet</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-04-22-add-svn-ignore-file/"
+       data-tag="SVN"
+       data-author="" >
+        <span class="post-title" title="给SVN控制的项目添加忽略文件/文件夹">给SVN控制的项目添加忽略文件/文件夹</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-04-22-highlight-of-jekyll/"
+       data-tag="Jekyll"
+       data-author="" >
+        <span class="post-title" title="Jekyll的中的代码高亮">Jekyll的中的代码高亮</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-04-22-ignore-password-in-git-push/"
+       data-tag="Git"
+       data-author="" >
+        <span class="post-title" title="让git push命令不再需要密码">让git push命令不再需要密码</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-05-20-set-proxy-for-git-or-apt/"
+       data-tag="Git"
+       data-author="" >
+        <span class="post-title" title="给Git或者APT设置goagent代理">给Git或者APT设置goagent代理</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-04-22-wordpress-to-jekyll/"
+       data-tag="Blog"
+       data-author="" >
+        <span class="post-title" title="博客迁移完成">博客迁移完成</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-05-23-install-mysql-and-mongo-web-admin/"
+       data-tag="MySQL,Linux,MongoDB"
+       data-author="" >
+        <span class="post-title" title="安装MySQL和MongoDB的WEB管理界面">安装MySQL和MongoDB的WEB管理界面</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-05-22-change-to-zsh/"
+       data-tag="Mac"
+       data-author="" >
+        <span class="post-title" title="从Bash切换到Zsh">从Bash切换到Zsh</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-08-04-something-about-tools-i-used/"
+       data-tag="Tool"
+       data-author="" >
+        <span class="post-title" title="我与工具">我与工具</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-08-06-tools-of-reading/"
+       data-tag="Tool"
+       data-author="" >
+        <span class="post-title" title="我与工具--阅读和知识管理">我与工具--阅读和知识管理</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-08-28-change-bootstrap-to-3/"
+       data-tag="Blog"
+       data-author="" >
+        <span class="post-title" title="更新前端框架到Bootstrap3">更新前端框架到Bootstrap3</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-12-08-linux-command-continue/"
+       data-tag="Linux"
+       data-author="" >
+        <span class="post-title" title="Linux下多个命令连续执行方法">Linux下多个命令连续执行方法</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-12-11-deploy-pptp-vpn-in-ubuntu/"
+       data-tag="Linux"
+       data-author="" >
+        <span class="post-title" title="在ubuntu下搭建pptp vpn服务器">在ubuntu下搭建pptp vpn服务器</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-12-11-lamp-in-mac/"
+       data-tag="PHP,Mac,MongoDB"
+       data-author="" >
+        <span class="post-title" title="Mac下用brew搭建LNMP和LAMP开发环境">Mac下用brew搭建LNMP和LAMP开发环境</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2014-03-20-php-debug-with-xdebug/"
+       data-tag="PHP"
+       data-author="" >
+        <span class="post-title" title="用Xdebug和Sublime调试PHP代码">用Xdebug和Sublime调试PHP代码</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2014-02-12-how-to-deploy-a-blog-on-github-by-jekyll/"
+       data-tag="Jekyll"
+       data-author="" >
+        <span class="post-title" title="在Github上搭建Jekyll博客和创建主题">在Github上搭建Jekyll博客和创建主题</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2014-04-10-install-vagrant-in-mac/"
+       data-tag="Mac,Vagrant"
+       data-author="" >
+        <span class="post-title" title="在Mac下安装使用Vagrant">在Mac下安装使用Vagrant</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2015-01-10-use-dropzone-and-qiniu-to-store-blog-images/"
+       data-tag="Blog"
+       data-author="" >
+        <span class="post-title" title="使用Dropzone和七牛优化博客图床">使用Dropzone和七牛优化博客图床</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2016-11-09-my-writing-tools/"
+       data-tag="Tools"
+       data-author="" >
+        <span class="post-title" title="我使用的收藏，写作和分享工具">我使用的收藏，写作和分享工具</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2016-12-30-deploy-l2tp-on-ubuntu/"
+       data-tag="Tools"
+       data-author="" >
+        <span class="post-title" title="在 Ubuntu 下部署 L2TP VPN">在 Ubuntu 下部署 L2TP VPN</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2016-12-31-deploy-shadowsocks-on-ubuntu/"
+       data-tag="Tools"
+       data-author="" >
+        <span class="post-title" title="在 Ubuntu 下部署 Shadowsocks">在 Ubuntu 下部署 Shadowsocks</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2017-01-14-install-hhvm-on-mac-with-docker/"
+       data-tag="Mac,Docker"
+       data-author="" >
+        <span class="post-title" title="在 Mac 下用 Docker 安装测试 HHVM">在 Mac 下用 Docker 安装测试 HHVM</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2017-02-21-docker-summary/"
+       data-tag="Docker"
+       data-author="" >
+        <span class="post-title" title="Docker 使用总结">Docker 使用总结</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2012-09-27-open-widown-in-javascript/"
+       data-tag="JavaScript"
+       data-author="" >
+        <span class="post-title" title="JS中防止浏览器屏蔽window.open">JS中防止浏览器屏蔽window.open</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2012-11-08-openstack-nova-internal/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="OpenStack Nova内部机制【译】">OpenStack Nova内部机制【译】</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2012-09-19-php-session-security/"
+       data-tag="PHP"
+       data-author="" >
+        <span class="post-title" title="PHP Session 原理及安全性提升">PHP Session 原理及安全性提升</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2012-09-27-php-variable-variables/"
+       data-tag="PHP"
+       data-author="" >
+        <span class="post-title" title="PHP可变变量">PHP可变变量</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2012-12-31-python-development-of-sae/"
+       data-tag="Python"
+       data-author="" >
+        <span class="post-title" title="sae下的python开发部署和一个简单例子">sae下的python开发部署和一个简单例子</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-01-30-command-of-kanyun/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="kanyun的api-client命令">kanyun的api-client命令</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-01-30-introduction-kanyun-server/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="kanyun server服务">kanyun server服务</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-01-30-deploy-kanyun/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="在OpenStack中部署kanyun">在OpenStack中部署kanyun</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-01-30-introduction-of-kanyun-worker/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="kanyun worker原理">kanyun worker原理</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-02-24-javascript-variable-domain/"
+       data-tag="JavaScript"
+       data-author="" >
+        <span class="post-title" title="JavaScript变量作用域">JavaScript变量作用域</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-03-20-debug-and-modify-openstack-horizon/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="调试和修改OpenStack中的Horizon部分">调试和修改OpenStack中的Horizon部分</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-03-20-different-bewteen-kvm-xen-qemu/"
+       data-tag="Virtualization"
+       data-author="" >
+        <span class="post-title" title="虚拟化中KVM, Xen, Qemu的区别">虚拟化中KVM, Xen, Qemu的区别</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-03-21-introduction-of-ceilometer/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="OpenStack Ceilometer项目简介">OpenStack Ceilometer项目简介</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-03-21-vnc-vs-rdp/"
+       data-tag="Virtualization"
+       data-author="" >
+        <span class="post-title" title="VNC和远程桌面的区别">VNC和远程桌面的区别</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-03-27-glossary-of-ceilometer/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="OpenStack Ceilometer的一些术语">OpenStack Ceilometer的一些术语</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-04-25-conceptual-logical-physical/"
+       data-tag="Concept"
+       data-author="" >
+        <span class="post-title" title="概念模型、逻辑模型、物理模型的区别">概念模型、逻辑模型、物理模型的区别</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-04-23-opensource-licenses/"
+       data-tag="Concept"
+       data-author="" >
+        <span class="post-title" title="五种常见的开源协议整理">五种常见的开源协议整理</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-04-25-some-concept-about-enterprise-storage/"
+       data-tag="Concept"
+       data-author="" >
+        <span class="post-title" title="几种企业的存储系统">几种企业的存储系统</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-04-26-create-windows-xp-image-for-openstack/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="给OpenStack创建Windows XP镜像">给OpenStack创建Windows XP镜像</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-01-deploy-a-ceilometer-horizon-project/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="部署一个ceilometer-horizon项目">部署一个ceilometer-horizon项目</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-01-terminal-command-of-ceilometer/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="Ceilometer的命令行使用">Ceilometer的命令行使用</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-03-create-windows-7-image-for-openstack/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="给OpenStack创建Win7镜像">给OpenStack创建Win7镜像</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-03-php-cache-of-a-page/"
+       data-tag="PHP"
+       data-author="" >
+        <span class="post-title" title="页面提速之——数据缓存">页面提速之——数据缓存</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-06-interactive-coding-ipython/"
+       data-tag="Python"
+       data-author="" >
+        <span class="post-title" title="交互式编程-IPython">交互式编程-IPython</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-06-the-viewpoint-metatag/"
+       data-tag="HTML"
+       data-author="" >
+        <span class="post-title" title="HTML中meta标签viewpoint的作用">HTML中meta标签viewpoint的作用</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-06-why-use-pip-over-easy-install/"
+       data-tag="Python"
+       data-author="" >
+        <span class="post-title" title="为什么使用pip而不是easy_install">为什么使用pip而不是easy_install</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-15-create-ubuntu-image-for-openstack/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="给OpenStack创建Ubuntu镜像">给OpenStack创建Ubuntu镜像</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-15-different-between-python-package-tools/"
+       data-tag="Python"
+       data-author="" >
+        <span class="post-title" title="python包工具之间的关系">python包工具之间的关系</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-13-openstack-grizzly-multihost-deployment-doc/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="OpenStack Grizzly Multihost部署文档">OpenStack Grizzly Multihost部署文档</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-15-learn-how-to-use-distutils/"
+       data-tag="Python"
+       data-author="" >
+        <span class="post-title" title="学习使用python打包工具distutils">学习使用python打包工具distutils</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-16-deploy-openstack-grizzly-in-virtual-machine/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="在虚拟机单机部署OpenStack Grizzly">在虚拟机单机部署OpenStack Grizzly</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-19-what-is-wsgi/"
+       data-tag="Python"
+       data-author="" >
+        <span class="post-title" title="WSGI学习">WSGI学习</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-27-openstack-horizon-locale/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="OpenStack Horizon 中文本地化">OpenStack Horizon 中文本地化</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-06-07-learn-python-setuptools-in-detail/"
+       data-tag="Python"
+       data-author="" >
+        <span class="post-title" title="Python包管理工具setuptools详解">Python包管理工具setuptools详解</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-06-09-learn-python-abc-module/"
+       data-tag="Python"
+       data-author="" >
+        <span class="post-title" title="学习Python的ABC模块">学习Python的ABC模块</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-06-09-learn-python-stevedore-module-in-detail/"
+       data-tag="Python"
+       data-author="" >
+        <span class="post-title" title="学习Python动态扩展包stevedore">学习Python动态扩展包stevedore</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-06-11-pipeline-of-openstack-ceilometer/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="OpenStack Ceilometer Pipeline代码解读">OpenStack Ceilometer Pipeline代码解读</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-06-11-hacking-in-openstack-ceilometer-compute-agent/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="OpenStack Ceilometer Agent源码解读">OpenStack Ceilometer Agent源码解读</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-06-12-hacking-in-openstack-ceilometer-api/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="OpenStack Ceilometer数据与API源码详解">OpenStack Ceilometer数据与API源码详解</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-06-12-hacking-in-openstack-ceilometer-collector/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="OpenStack Ceilometer Collector代码解读">OpenStack Ceilometer Collector代码解读</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-10-01-deploy-ceilometer-of-openstack/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="部署Ceilometer到已有环境中">部署Ceilometer到已有环境中</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-12-08-implemention-of-breadcrumbs-by-css3/"
+       data-tag="CSS"
+       data-author="" >
+        <span class="post-title" title="基于CSS3实现尖角面包屑">基于CSS3实现尖角面包屑</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-01-16-php-namespace-and-autoload/"
+       data-tag="PHP"
+       data-author="" >
+        <span class="post-title" title="PHP命名空间及自动加载">PHP命名空间及自动加载</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-01-24-apache-log-format/"
+       data-tag="Apache"
+       data-author="" >
+        <span class="post-title" title="Apache 日志文件格式及简单处理">Apache 日志文件格式及简单处理</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-01-17-python-script-of-sae-log-download/"
+       data-tag="Python"
+       data-author="" >
+        <span class="post-title" title="Python脚本--下载合并SAE日志">Python脚本--下载合并SAE日志</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-01-25-how-to-use-php-socket/"
+       data-tag="PHP"
+       data-author="" >
+        <span class="post-title" title="PHP Socket的使用">PHP Socket的使用</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-01-30-understanding-the-github-workflow/"
+       data-tag="Git"
+       data-author="" >
+        <span class="post-title" title="了解GitHub工作流【译】">了解GitHub工作流【译】</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-02-15-apache-and-nginx/"
+       data-tag="Apache,Nginx"
+       data-author="" >
+        <span class="post-title" title="从运行原理及使用场景看Apache和Nginx">从运行原理及使用场景看Apache和Nginx</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-03-10-grunt-bower-and-laravel/"
+       data-tag="PHP,Laravel"
+       data-author="" >
+        <span class="post-title" title="用Laravel+Grunt+Bower管理你的应用">用Laravel+Grunt+Bower管理你的应用</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-03-20-use-other-libraries-in-laravel/"
+       data-tag="PHP,Laravel"
+       data-author="" >
+        <span class="post-title" title="在Laravel中使用自己的类库三种方式">在Laravel中使用自己的类库三种方式</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-04-11-redis-queue-in-laravel/"
+       data-tag="Laravel"
+       data-author="" >
+        <span class="post-title" title="Laravel中用Redis来做任务队列">Laravel中用Redis来做任务队列</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-03-22-managing-your-larrvel-queue-by-supervisor/"
+       data-tag="PHP,Laravel"
+       data-author="" >
+        <span class="post-title" title="使用Supervisor来管理你的Laravel队列">使用Supervisor来管理你的Laravel队列</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-04-16-insert-large-number-of-data-in-mysql/"
+       data-tag="MySQL"
+       data-author="" >
+        <span class="post-title" title="MySQL大量数据插入方法性能分析比较">MySQL大量数据插入方法性能分析比较</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-04-23-roc-curve/"
+       data-tag="Concept"
+       data-author="" >
+        <span class="post-title" title="ROC曲线">ROC曲线</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-05-04-set-environment-variables-of-server-for-php/"
+       data-tag="PHP,Apache,Nginx"
+       data-author="" >
+        <span class="post-title" title="设置PHP服务器Apache和Nginx环境变量">设置PHP服务器Apache和Nginx环境变量</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-04-27-magic-methods-and-magic-constants-in-php/"
+       data-tag="PHP"
+       data-author="" >
+        <span class="post-title" title="PHP中的魔术方法和魔术常量简介和使用">PHP中的魔术方法和魔术常量简介和使用</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-09-26-use-old-version-of-brew-php/"
+       data-tag="PHP,Mac"
+       data-author="" >
+        <span class="post-title" title="回退Mac上用Brew安装的PHP版本">回退Mac上用Brew安装的PHP版本</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-12-06-ioc-and-facade-in-laravel/"
+       data-tag="PHP,Laravel"
+       data-author="" >
+        <span class="post-title" title="Laravel核心之IOC和Facade">Laravel核心之IOC和Facade</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2015-01-08-conflict-between-camel-and-snake-in-laravel/"
+       data-tag="PHP,Laravel"
+       data-author="" >
+        <span class="post-title" title="Laravel关联模型名称一致性问题">Laravel关联模型名称一致性问题</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2015-09-07-sort-algorithms/"
+       data-tag="算法"
+       data-author="" >
+        <span class="post-title" title="七种常见经典排序算法总结（C++实现）">七种常见经典排序算法总结（C++实现）</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2017-02-19-setup-react-environment/"
+       data-tag="React"
+       data-author="" >
+        <span class="post-title" title="React 学习 - 开发环境搭建">React 学习 - 开发环境搭建</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-04-19-design-patterns-of-php/"
+       data-tag="PHP,Pattern"
+       data-author="" >
+        <span class="post-title" title="设计模式详解及PHP实现">设计模式详解及PHP实现</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+</nav>
+    </div>
+</aside>
+<div class="post">
+    <div class="pjax">
+        <article id="post-tech/2013-05-13-openstack-grizzly-multihost-deployment-doc" class="article article-type-post" itemscope itemprop="blogPost">
+    
+        <h1 class="article-title">OpenStack Grizzly Multihost部署文档</h1>
+    
+    <div class="article-meta">
+        
+        
+        
+        <span class="book">
+            
+            <a href="javascript:" data-rel="技术">技术</a>
+            
+        </span>
+        
+        
+        <span class="tag">
+            
+            <a href="javascript:" class="color5">OpenStack</a>
+            
+        </span>
+        
+    </div>
+    <div class="article-meta">
+        
+        创建时间:<time class="date" title='更新时间: 2017-06-20 14:35:12'>2017-06-20 15:24</time>
+        
+    </div>
+    <div class="article-meta">
+        
+        
+        <span id="busuanzi_container_page_pv">
+            阅读:<span id="busuanzi_value_page_pv"></span>
+        </span>
+        
+        
+        <span class="top-comment" title="跳转至评论区"><a href="#comments">评论:<span class="count-comment"></span></a></span>
+        
+    </div>
+    
+    <div class="toc-ref">
+    
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#环境要求"><span class="toc-text">环境要求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#控制节点"><span class="toc-text">控制节点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基本环境变量配置"><span class="toc-text">基本环境变量配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#网络设置"><span class="toc-text">网络设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#添加源"><span class="toc-text">添加源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装MySQL和RabbitMQ"><span class="toc-text">安装MySQL和RabbitMQ</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#时间同步NTP"><span class="toc-text">时间同步NTP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#允许路由转发"><span class="toc-text">允许路由转发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装认证模块Keystone"><span class="toc-text">安装认证模块Keystone</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装镜像管理模块Glance"><span class="toc-text">安装镜像管理模块Glance</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装块存储管理Cinder"><span class="toc-text">安装块存储管理Cinder</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装网络管理模块Quantum"><span class="toc-text">安装网络管理模块Quantum</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装虚拟化管理模块Nova"><span class="toc-text">安装虚拟化管理模块Nova</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装WEB控制模块Horizon"><span class="toc-text">安装WEB控制模块Horizon</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装完成"><span class="toc-text">安装完成</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#所有计算节点"><span class="toc-text">所有计算节点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基本环境变量配置-1"><span class="toc-text">基本环境变量配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#网络设置-1"><span class="toc-text">网络设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#添加源-1"><span class="toc-text">添加源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#时间同步NTP-1"><span class="toc-text">时间同步NTP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#允许路由转发-1"><span class="toc-text">允许路由转发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装OpenVSwitch"><span class="toc-text">安装OpenVSwitch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装网络管理组件Quantum"><span class="toc-text">安装网络管理组件Quantum</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装虚拟化管理Nova"><span class="toc-text">安装虚拟化管理Nova</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建一个虚拟机"><span class="toc-text">创建一个虚拟机</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#开启端口"><span class="toc-text">开启端口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#修改bug"><span class="toc-text">修改bug</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他可能问题"><span class="toc-text">其他可能问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#网卡配置问题"><span class="toc-text">网卡配置问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置子网的问题"><span class="toc-text">配置子网的问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#终端命令行问题"><span class="toc-text">终端命令行问题</span></a></li></ol></li></ol>
+    
+<style>
+    .left-col .switch-btn,
+    .left-col .switch-area {
+        display: none;
+    }
+    .toc-level-3 i,
+    .toc-level-3 ol {
+        display: none !important;
+    }
+</style>
+</div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>生产环境中部署OpenStack基本的要求的是稳定，安全和可扩展性，使用Multihost方式部署的好处是保证了网络的高可用，服务器数量捉急，所以选择<a href="https://github.com/mseknibilel/OpenStack-Grizzly-Install-Guide" target="_blank" rel="external">mseknibilel</a>的部署方式会比较纠结于控制节点和网络节点的资源浪费。所以本文档参考<a href="http://longgeek.com/2013/04/03/openstack-grizzly-quantum-multihost-deployment/" target="_blank" rel="external">Longgeek</a>的这篇文章，只做控制节点和计算节点，1个控制节点配多个计算节点，Quantum部署在计算节点上。</p>
+</blockquote>
+<h2 id="环境要求"><a href="#环境要求" class="headerlink" title="环境要求"></a>环境要求</h2><p>先安装1个控制节点和1个计算节点，计算节点可以动态增加，只要将IP地址递增即可</p>
+<table class="table"><br>  <tr><td>节点类型</td><td>网卡配置</td></tr><br>  <tr><td>控制节点</td><td>eth0 (172.16.0.51), eth1 (59.65.233.231)</td></tr><br>  <tr><td>计算节点</td><td>eth0 (172.16.0.52), eth1 (10.10.10.52), eth2 (59.65.233.233)</td></tr><br></table>
+
+<p>第一次搭建的时候出了些问题，网卡端口和网络配置没一一映射，通过Linux的mii-tool指令，可以查看每个端口的连接情况</p>
+<h2 id="控制节点"><a href="#控制节点" class="headerlink" title="控制节点"></a>控制节点</h2><h3 id="基本环境变量配置"><a href="#基本环境变量配置" class="headerlink" title="基本环境变量配置"></a>基本环境变量配置</h3><pre><code>export YS_CON_MANAGE_IP=172.16.0.51
+export YS_CON_MANAGE_NETMASK=255.255.0.0
+export YS_CON_EXT_IP=59.65.233.231
+export YS_CON_EXT_NETMASK=255.255.255.0
+export YS_CON_EXT_GATEWAY=59.65.233.254
+export YS_CON_EXT_DNS=202.204.65.5
+export YS_CON_SERVICE_ENDPOINT_IP=172.16.0.51
+export YS_CON_MYSQL_USER=root
+export YS_CON_MYSQL_PASS=123qwe
+export ADMIN_PASSWORD=123qwe
+export ADMIN_TOKEN=ceit
+export OS_TENANT_NAME=admin
+export OS_USERNAME=admin
+export OS_PASSWORD=$ADMIN_PASSWORD
+export OS_AUTH_URL=&quot;http://${YS_CON_MANAGE_IP}:5000/v2.0/&quot;   
+export OS_REGION_NAME=RegionOne
+export SERVICE_TOKEN=${ADMIN_TOKEN}
+export SERVICE_ENDPOINT=http://${YS_CON_MANAGE_IP}:35357/v2.0/
+</code></pre><h3 id="网络设置"><a href="#网络设置" class="headerlink" title="网络设置"></a>网络设置</h3><p>设置网卡信息</p>
+<pre><code>cat &gt; /etc/network/interfaces &lt;&lt; _EOF_
+auto eth0
+iface eth0 inet static
+address $YS_CON_MANAGE_IP
+netmask $YS_CON_MANAGE_NETMASK
+
+auto eth1
+iface eth1 inet static
+address $YS_CON_EXT_IP
+netmask $YS_CON_EXT_NETMASK
+gateway $YS_CON_EXT_GATEWAY
+dns-nameservers $YS_CON_EXT_DNS
+_EOF_
+</code></pre><p>重启网络服务</p>
+<pre><code>/etc/init.d/networking restart
+</code></pre><h3 id="添加源"><a href="#添加源" class="headerlink" title="添加源"></a>添加源</h3><p>添加Ubuntu Grizzly源，并升级</p>
+<pre><code>cat &gt; /etc/apt/sources.list.d/grizzly.list &lt;&lt; _EOF_
+deb http://ubuntu-cloud.archive.canonical.com/ubuntu precise-updates/grizzly main
+deb  http://ubuntu-cloud.archive.canonical.com/ubuntu precise-proposed/grizzly main
+_EOF_
+apt-get update
+apt-get -y upgrade --force-yes
+apt-get install -y ubuntu-cloud-keyring --force-yes
+</code></pre><h3 id="安装MySQL和RabbitMQ"><a href="#安装MySQL和RabbitMQ" class="headerlink" title="安装MySQL和RabbitMQ"></a>安装MySQL和RabbitMQ</h3><p>安装MySQL</p>
+<pre><code>export DEBIAN_FRONTEND=noninteractive
+apt-get install -q -y mysql-server python-mysqldb
+mysqladmin -u $YS_CON_MYSQL_USER password $YS_CON_MYSQL_PASS
+</code></pre><p>修改/etc/mysql/my.cnf文件绑定地址从127.0.0.1到0.0.0.0，禁止 mysql 做域名解析，防止连接错误，然后重新启动mysql服务.</p>
+<pre><code>sed -i -e &apos;s/127.0.0.1/0.0.0.0/g&apos; -e &apos;/skip-external-locking/a skip-name-resolve&apos; /etc/mysql/my.cnf
+/etc/init.d/mysql restart
+</code></pre><p>安装 RabbitMQ</p>
+<pre><code>apt-get install -y rabbitmq-server --force-yes
+</code></pre><h3 id="时间同步NTP"><a href="#时间同步NTP" class="headerlink" title="时间同步NTP"></a>时间同步NTP</h3><p>安装NTP并配置以计算节点为同步时钟</p>
+<pre><code>apt-get install -y ntp
+sed -i &apos;s/server ntp.ubuntu.com/server ntp.ubuntu.com\nserver 127.127.1.0\nfudge 127.127.1.0 stratum 10/g&apos; /etc/ntp.conf
+service ntp restart
+</code></pre><h3 id="允许路由转发"><a href="#允许路由转发" class="headerlink" title="允许路由转发"></a>允许路由转发</h3><p>开启路由转发</p>
+<pre><code>sed -i &apos;s/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/&apos; /etc/sysctl.conf
+sysctl net.ipv4.ip_forward=1
+</code></pre><h3 id="安装认证模块Keystone"><a href="#安装认证模块Keystone" class="headerlink" title="安装认证模块Keystone"></a>安装认证模块Keystone</h3><p>安装认证模块Keystone</p>
+<pre><code>apt-get install -y keystone --force-yes
+</code></pre><p>增加数据库连接权限</p>
+<pre><code>mysql -u$YS_CON_MYSQL_USER -p$YS_CON_MYSQL_PASS -e &quot;
+create database keystone;
+grant all on keystone.* to &apos;keystone&apos;@&apos;%&apos; identified by &apos;keystone&apos;;&quot;
+</code></pre><p>修改/etc/keystone/keystone.conf配置文件</p>
+<pre><code>while read line;
+do 
+pattern=`echo $line | awk &apos;{printf &quot;%s %s&quot;,$1,$2}&apos;`
+sed -i &quot;/$pattern/c $line&quot; /etc/keystone/keystone.conf;
+done &lt;&lt; _EOF_
+admin_token = $ADMIN_TOKEN
+token_format = UUID
+debug = True
+verbose = True
+connection = mysql://keystone:keystone@${YS_CON_MANAGE_IP}/keystone
+_EOF_
+</code></pre><p>启用keystone然后同步数据库</p>
+<pre><code>service keystone restart
+keystone-manage db_sync
+</code></pre><p>导入keystone数据，如果剪切板有限制的话最好分两次粘贴</p>
+<p>第一部分：</p>
+<pre><code>ADMIN_PASSWORD=${ADMIN_PASSWORD:-password}
+SERVICE_PASSWORD=${ADMIN_PASSWORD:-password}
+export SERVICE_TOKEN=$ADMIN_TOKEN
+export SERVICE_ENDPOINT=&quot;http://${YS_CON_SERVICE_ENDPOINT_IP}:35357/v2.0&quot;
+SERVICE_TENANT_NAME=${SERVICE_TENANT_NAME:-service}
+KEYSTONE_REGION=RegionOne
+KEYSTONE_IP=$YS_CON_SERVICE_ENDPOINT_IP
+SWIFT_IP=$YS_CON_SERVICE_ENDPOINT_IP
+COMPUTE_IP=$KEYSTONE_IP
+EC2_IP=$KEYSTONE_IP
+GLANCE_IP=$KEYSTONE_IP
+VOLUME_IP=$KEYSTONE_IP
+QUANTUM_IP=$KEYSTONE_IP
+get_id () {
+    echo `$@ | awk &apos;/ id / { print $4 }&apos;`
+}
+ADMIN_TENANT=$(get_id keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT tenant-create --name=admin)
+SERVICE_TENANT=$(get_id keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT tenant-create --name=$SERVICE_TENANT_NAME)
+DEMO_TENANT=$(get_id keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT tenant-create --name=demo)
+INVIS_TENANT=$(get_id keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT tenant-create --name=invisible_to_admin)
+ADMIN_USER=$(get_id keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT user-create --name=admin --pass=&quot;$ADMIN_PASSWORD&quot; --email=admin@domain.com)
+DEMO_USER=$(get_id keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT user-create --name=demo --pass=&quot;$ADMIN_PASSWORD&quot; --email=demo@domain.com)
+ADMIN_ROLE=$(get_id keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT role-create --name=admin)
+KEYSTONEADMIN_ROLE=$(get_id keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT role-create --name=KeystoneAdmin)
+KEYSTONESERVICE_ROLE=$(get_id keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT role-create --name=KeystoneServiceAdmin)
+keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT user-role-add --user-id $ADMIN_USER --role-id $ADMIN_ROLE --tenant-id $ADMIN_TENANT
+keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT user-role-add --user-id $ADMIN_USER --role-id $ADMIN_ROLE --tenant-id $DEMO_TENANT
+keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT user-role-add --user-id $ADMIN_USER --role-id $KEYSTONEADMIN_ROLE --tenant-id $ADMIN_TENANT
+keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT user-role-add --user-id $ADMIN_USER --role-id $KEYSTONESERVICE_ROLE --tenant-id $ADMIN_TENANT
+MEMBER_ROLE=$(get_id keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT role-create --name=Member)
+keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT user-role-add --user-id $DEMO_USER --role-id $MEMBER_ROLE --tenant-id $DEMO_TENANT
+keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT user-role-add --user-id $DEMO_USER --role-id $MEMBER_ROLE --tenant-id $INVIS_TENANT
+NOVA_USER=$(get_id keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT user-create --name=nova --pass=&quot;$SERVICE_PASSWORD&quot; --tenant-id $SERVICE_TENANT --email=nova@domain.com)
+keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT user-role-add --tenant-id $SERVICE_TENANT --user-id $NOVA_USER --role-id $ADMIN_ROLE
+GLANCE_USER=$(get_id keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT user-create --name=glance --pass=&quot;$SERVICE_PASSWORD&quot; --tenant-id $SERVICE_TENANT --email=glance@domain.com)
+keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT user-role-add --tenant-id $SERVICE_TENANT --user-id $GLANCE_USER --role-id $ADMIN_ROLE
+SWIFT_USER=$(get_id keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT user-create --name=swift --pass=&quot;$SERVICE_PASSWORD&quot; --tenant-id $SERVICE_TENANT --email=swift@domain.com)
+keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT user-role-add --tenant-id $SERVICE_TENANT --user-id $SWIFT_USER --role-id $ADMIN_ROLE
+RESELLER_ROLE=$(get_id keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT role-create --name=ResellerAdmin)
+</code></pre><p>第二部分：</p>
+<pre><code>keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT user-role-add --tenant-id $SERVICE_TENANT --user-id $NOVA_USER --role-id $RESELLER_ROLE
+QUANTUM_USER=$(get_id keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT user-create --name=quantum --pass=&quot;$SERVICE_PASSWORD&quot; --tenant-id $SERVICE_TENANT --email=quantum@domain.com)
+keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT user-role-add --tenant-id $SERVICE_TENANT --user-id $QUANTUM_USER --role-id $ADMIN_ROLE
+CINDER_USER=$(get_id keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT user-create --name=cinder --pass=&quot;$SERVICE_PASSWORD&quot; --tenant-id $SERVICE_TENANT --email=cinder@domain.com)
+keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT user-role-add --tenant-id $SERVICE_TENANT --user-id $CINDER_USER --role-id ${ADMIN_ROLE}
+KEYSTONE_ID=$(keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT service-create --name keystone --type identity --description &apos;OpenStack Identity&apos;| awk &apos;/ id / { print $4 }&apos;)
+COMPUTE_ID=$(keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT service-create --name=nova --type=compute --description=&apos;OpenStack Compute Service&apos;| awk &apos;/ id / { print $4 }&apos;)
+CINDER_ID=$(keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT service-create --name=cinder --type=volume --description=&apos;OpenStack Volume Service&apos;| awk &apos;/ id / { print $4 }&apos;)
+GLANCE_ID=$(keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT service-create --name=glance --type=image --description=&apos;OpenStack Image Service&apos;| awk &apos;/ id / { print $4 }&apos;)
+SWIFT_ID=$(keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT service-create --name=swift --type=object-store --description=&apos;OpenStack Storage Service&apos; | awk &apos;/ id / { print $4 }&apos;)
+EC2_ID=$(keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT service-create --name=ec2 --type=ec2 --description=&apos;OpenStack EC2 service&apos;| awk &apos;/ id / { print $4 }&apos;)
+QUANTUM_ID=$(keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT service-create --name=quantum --type=network --description=&apos;OpenStack Networking service&apos;| awk &apos;/ id / { print $4 }&apos;)
+</code></pre><p>第三部分：</p>
+<pre><code>if [ &quot;$KEYSTONE_WLAN_IP&quot; != &apos;&apos; ];then
+    keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT endpoint-create --region $KEYSTONE_REGION --service-id=$KEYSTONE_ID --publicurl http://&quot;$KEYSTONE_WLAN_IP&quot;:5000/v2.0 --adminurl http://&quot;$KEYSTONE_WLAN_IP&quot;:35357/v2.0 --internalurl http://&quot;$KEYSTONE_WLAN_IP&quot;:5000/v2.0
+fi
+keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT endpoint-create --region $KEYSTONE_REGION --service-id=$KEYSTONE_ID --publicurl http://&quot;$KEYSTONE_IP&quot;:5000/v2.0 --adminurl http://&quot;$KEYSTONE_IP&quot;:35357/v2.0 --internalurl http://&quot;$KEYSTONE_IP&quot;:5000/v2.0
+keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT endpoint-create --region $KEYSTONE_REGION --service-id=$COMPUTE_ID --publicurl http://&quot;$COMPUTE_IP&quot;:8774/v2/\$\(tenant_id\)s --adminurl http://&quot;$COMPUTE_IP&quot;:8774/v2/\$\(tenant_id\)s --internalurl http://&quot;$COMPUTE_IP&quot;:8774/v2/\$\(tenant_id\)s
+keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT endpoint-create --region $KEYSTONE_REGION --service-id=$CINDER_ID --publicurl http://&quot;$VOLUME_IP&quot;:8776/v1/\$\(tenant_id\)s --adminurl http://&quot;$VOLUME_IP&quot;:8776/v1/\$\(tenant_id\)s --internalurl http://&quot;$VOLUME_IP&quot;:8776/v1/\$\(tenant_id\)s
+keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT endpoint-create --region $KEYSTONE_REGION --service-id=$GLANCE_ID --publicurl http://&quot;$GLANCE_IP&quot;:9292/v2 --adminurl http://&quot;$GLANCE_IP&quot;:9292/v2 --internalurl http://&quot;$GLANCE_IP&quot;:9292/v2
+if [ &quot;$SWIFT_WLAN_IP&quot; != &apos;&apos; ];then
+    keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT endpoint-create --region $KEYSTONE_REGION --service-id=$SWIFT_ID --publicurl http://&quot;$SWIFT_WLAN_IP&quot;:8080/v1/AUTH_\$\(tenant_id\)s --adminurl http://&quot;$SWIFT_WLAN_IP&quot;:8080/v1 --internalurl http://&quot;$SWIFT_WLAN_IP&quot;:8080/v1/AUTH_\$\(tenant_id\)s
+fi
+keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT endpoint-create --region $KEYSTONE_REGION --service-id=$SWIFT_ID --publicurl http://&quot;$SWIFT_IP&quot;:8080/v1/AUTH_\$\(tenant_id\)s --adminurl http://&quot;$SWIFT_IP&quot;:8080/v1 --internalurl http://&quot;$SWIFT_IP&quot;:8080/v1/AUTH_\$\(tenant_id\)s
+keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT endpoint-create --region $KEYSTONE_REGION --service-id=$EC2_ID --publicurl http://&quot;$EC2_IP&quot;:8773/services/Cloud --adminurl http://&quot;$EC2_IP&quot;:8773/services/Admin --internalurl http://&quot;$EC2_IP&quot;:8773/services/Cloud
+keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT endpoint-create --region $KEYSTONE_REGION --service-id=$QUANTUM_ID --publicurl http://&quot;$QUANTUM_IP&quot;:9696/ --adminurl http://&quot;$QUANTUM_IP&quot;:9696/ --internalurl http://&quot;$QUANTUM_IP&quot;:9696/
+</code></pre><p>导入环境变量</p>
+<pre><code>cat &gt; /root/export.sh &lt;&lt; _EOF_
+export OS_TENANT_NAME=admin
+export OS_USERNAME=admin
+export OS_PASSWORD=$ADMIN_PASSWORD
+export OS_AUTH_URL=&quot;http://${YS_CON_MANAGE_IP}:5000/v2.0/&quot;   
+export OS_REGION_NAME=RegionOne
+export SERVICE_TOKEN=${ADMIN_TOKEN}
+export SERVICE_ENDPOINT=http://${YS_CON_MANAGE_IP}:35357/v2.0/
+_EOF_
+
+echo &apos;source /root/export.sh&apos; &gt;&gt; /root/.bashrc
+source /root/export.sh
+</code></pre><p>验证keystone </p>
+<pre><code>keystone user-list
+</code></pre><h3 id="安装镜像管理模块Glance"><a href="#安装镜像管理模块Glance" class="headerlink" title="安装镜像管理模块Glance"></a>安装镜像管理模块Glance</h3><p>安装镜像管理模块Glance</p>
+<pre><code>apt-get install -y glance --force-yes
+</code></pre><p>创建一个 glance 数据库并授权</p>
+<pre><code>mysql -u$YS_CON_MYSQL_USER -p$YS_CON_MYSQL_PASS -e &quot;
+create database glance;
+grant all on glance.* to &apos;glance&apos;@&apos;%&apos; identified by &apos;glance&apos;;&quot;
+</code></pre><p>更新 /etc/glance/glance-api.conf 文件</p>
+<pre><code>while read line;
+do 
+pattern=`echo $line | awk &apos;{printf &quot;%s %s&quot;,$1,$2}&apos;`
+sed -i &quot;/$pattern/c $line&quot; /etc/glance/glance-api.conf;
+done &lt;&lt; _EOF_
+verbose = True
+debug = True
+sql_connection = mysql://glance:glance@${YS_CON_MANAGE_IP}/glance
+workers = 4
+registry_host = ${YS_CON_MANAGE_IP}
+notifier_strategy = rabbit
+rabbit_host = ${YS_CON_MANAGE_IP}
+rabbit_userid = guest
+rabbit_password = guest
+auth_host = ${YS_CON_MANAGE_IP}
+auth_port = 35357
+auth_protocol = http
+admin_tenant_name = service
+admin_user = glance
+admin_password = ${ADMIN_PASSWORD}
+_EOF_
+
+echo &quot;config_file = /etc/glance/glance-api-paste.ini&quot; &gt;&gt; /etc/glance/glance-api.conf
+echo &quot;flavor = keystone&quot; &gt;&gt; /etc/glance/glance-api.conf
+</code></pre><p>更新/etc/glance/glance-registry.conf文件</p>
+<pre><code>while read line;
+do 
+pattern=`echo $line | awk &apos;{printf &quot;%s %s&quot;,$1,$2}&apos;`
+sed -i &quot;/$pattern/c $line&quot; /etc/glance/glance-registry.conf;
+done &lt;&lt; _EOF_
+verbose = True
+debug = True
+sql_connection = mysql://glance:glance@${YS_CON_MANAGE_IP}/glance
+auth_host = ${YS_CON_MANAGE_IP}
+auth_port = 35357
+auth_protocol = http
+admin_tenant_name = service
+admin_user = glance
+admin_password = ${ADMIN_PASSWORD}
+_EOF_
+
+echo &quot;config_file = /etc/glance/glance-registry-paste.ini&quot; &gt;&gt; /etc/glance/glance-registry.conf
+echo &quot;flavor = keystone&quot; &gt;&gt; /etc/glance/glance-registry.conf
+</code></pre><p>启动 glance-api 和 glance-registry 服务并同步到数据库：</p>
+<pre><code>/etc/init.d/glance-api restart
+/etc/init.d/glance-registry restart
+glance-manage version_control 0
+glance-manage db_sync
+</code></pre><p>测试 glance 的安装，上传一个镜像。下载 Cirros 镜像并上传:</p>
+<pre><code>wget https://launchpad.net/cirros/trunk/0.3.0/+download/cirros-0.3.0-x86_64-disk.img
+glance image-create --name=&apos;cirros&apos; --public --container-format=ovf --disk-format=qcow2 &lt; ./cirros-0.3.0-x86_64-disk.img 
+</code></pre><p>查看上传的镜像</p>
+<pre><code>glance image-list
+</code></pre><h3 id="安装块存储管理Cinder"><a href="#安装块存储管理Cinder" class="headerlink" title="安装块存储管理Cinder"></a>安装块存储管理Cinder</h3><p>安装块存储管理Cinder</p>
+<pre><code>apt-get install -y cinder-api cinder-common cinder-scheduler cinder-volume python-cinderclient iscsitarget open-iscsi iscsitarget-dkms --force-yes
+</code></pre><p>配置 iscsi 并启动服务：</p>
+<pre><code>sed -i &apos;s/false/true/g&apos; /etc/default/iscsitarget
+/etc/init.d/iscsitarget restart
+/etc/init.d/open-iscsi restart
+</code></pre><p>创建 cinder 数据库并授权用户访问：</p>
+<pre><code>mysql -u$YS_CON_MYSQL_USER -p$YS_CON_MYSQL_PASS -e &quot;
+create database cinder;
+grant all on cinder.* to &apos;cinder&apos;@&apos;%&apos; identified by &apos;cinder&apos;;&quot;
+</code></pre><p>修改 /etc/cinder/cinder.conf：</p>
+<pre><code>cat &gt; /etc/cinder/cinder.conf &lt;&lt; _EOF_
+[DEFAULT]
+verbose = True
+debug = True
+iscsi_helper = ietadm
+auth_strategy = keystone
+volume_group = cinder-volumes
+volume_name_template = volume-%s
+state_path = /var/lib/cinder
+volumes_dir = /var/lib/cinder/volumes
+rootwrap_config = /etc/cinder/rootwrap.conf
+api_paste_config = /etc/cinder/api-paste.ini
+rabbit_host = $YS_CON_MANAGE_IP
+rabbit_password = guest
+rpc_backend = cinder.openstack.common.rpc.impl_kombu
+sql_connection = mysql://cinder:cinder@${YS_CON_MANAGE_IP}/cinder
+osapi_volume_extension = cinder.api.contrib.standard_extensions
+_EOF_
+</code></pre><p>修改 /etc/cinder/api-paste.ini 文件末尾 [filter:authtoken] 字段 </p>
+<pre><code>while read line;
+do 
+pattern=`echo $line | awk &apos;{printf &quot;%s %s&quot;,$1,$2}&apos;`
+sed -i &quot;/$pattern/c $line&quot; /etc/cinder/api-paste.ini;
+done &lt;&lt; _EOF_
+service_host = ${YS_CON_MANAGE_IP}
+service_port = 5000
+auth_host = ${YS_CON_MANAGE_IP}
+auth_port = 35357
+auth_protocol = http
+admin_tenant_name = service
+admin_user = cinder
+admin_password = ${ADMIN_PASSWORD}
+signing_dir = /var/lib/cinder
+_EOF_
+</code></pre><p>创建一个卷组，命名为 cinder-volumes:</p>
+<pre><code>dd if=/dev/zero of=/opt/cinder-volumes bs=1 count=0 seek=5G
+losetup /dev/loop2 /opt/cinder-volumes
+fdisk /dev/loop2
+#按下面步骤输入
+n
+p
+1
+ENTER
+ENTER
+t
+8e
+w
+</code></pre><p>分区现在有了，创建物理卷和卷组</p>
+<pre><code>pvcreate /dev/loop2
+vgcreate cinder-volumes /dev/loop2
+</code></pre><p>这个卷组在系统重启会失效，把它写到 rc.local 中：</p>
+<pre><code>echo &apos;losetup /dev/loop2 /opt/cinder-volumes&apos; &gt;&gt; /etc/rc.local
+</code></pre><p>同步数据库并重启服务：</p>
+<pre><code>cinder-manage db sync
+/etc/init.d/cinder-api restart
+/etc/init.d/cinder-scheduler restart
+/etc/init.d/cinder-volume restart
+</code></pre><h3 id="安装网络管理模块Quantum"><a href="#安装网络管理模块Quantum" class="headerlink" title="安装网络管理模块Quantum"></a>安装网络管理模块Quantum</h3><p>安装 Quantum server 和 OpenVSwitch 包</p>
+<pre><code>apt-get install -y quantum-server quantum-plugin-openvswitch --force-yes
+</code></pre><p>创建 quantum 数据库并授权用户访问：</p>
+<pre><code>mysql -u$YS_CON_MYSQL_USER -p$YS_CON_MYSQL_PASS -e &quot;
+create database quantum;
+grant all on quantum.* to &apos;quantum&apos;@&apos;%&apos; identified by &apos;quantum&apos;;&quot;
+</code></pre><p>编辑 /etc/quantum/quantum.conf 文件</p>
+<pre><code>while read line;
+do 
+pattern=`echo $line | awk &apos;{printf &quot;%s %s&quot;,$1,$2}&apos;`
+sed -i &quot;/$pattern/c $line&quot; /etc/quantum/quantum.conf;
+done &lt;&lt; _EOF_
+debug = True
+verbose = True
+rabbit_host = ${YS_CON_MANAGE_IP}
+rabbit_password = guest
+rabbit_port = 5672
+rabbit_userid = guest
+auth_host = ${YS_CON_MANAGE_IP}
+auth_port = 35357
+auth_protocol = http
+admin_tenant_name = service
+admin_user = quantum
+admin_password = ${ADMIN_PASSWORD}
+signing_dir = /var/lib/quantum/keystone-signing
+_EOF_
+</code></pre><p>编辑 OVS 插件配置文件 /etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini</p>
+<pre><code>while read line;
+do 
+pattern=`echo $line | awk &apos;{printf &quot;%s %s&quot;,$1,$2}&apos;`
+sed -i &quot;/$pattern/c $line&quot; /etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini;
+done &lt;&lt; _EOF_
+sql_connection = mysql://quantum:quantum@${YS_CON_MANAGE_IP}/quantum
+tenant_network_type = gre
+enable_tunneling = True
+tunnel_id_ranges = 1:1000
+_EOF_
+</code></pre><p>启动 quantum 服务：</p>
+<pre><code>/etc/init.d/quantum-server restart
+</code></pre><h3 id="安装虚拟化管理模块Nova"><a href="#安装虚拟化管理模块Nova" class="headerlink" title="安装虚拟化管理模块Nova"></a>安装虚拟化管理模块Nova</h3><p>安装 Nova 相关软件包</p>
+<pre><code>apt-get install -y nova-api nova-cert novnc nova-conductor nova-consoleauth nova-scheduler nova-novncproxy --force-yes
+</code></pre><p>创建 nova 数据库，授权 nova 用户访问它：</p>
+<pre><code>mysql -u$YS_CON_MYSQL_USER -p$YS_CON_MYSQL_PASS -e &quot;
+create database nova;
+grant all on nova.* to &apos;nova&apos;@&apos;%&apos; identified by &apos;nova&apos;;&quot;
+</code></pre><p>在 /etc/nova/api-paste.ini 中修改 autotoken 验证部分：</p>
+<pre><code>while read line;
+do 
+pattern=`echo $line | awk &apos;{printf &quot;%s %s&quot;,$1,$2}&apos;`
+sed -i &quot;/$pattern/c $line&quot; /etc/nova/api-paste.ini;
+done &lt;&lt; _EOF_
+auth_host = ${YS_CON_MANAGE_IP}
+auth_port = 35357
+auth_protocol = http
+admin_tenant_name = service
+admin_user = nova
+admin_password = ${ADMIN_PASSWORD}
+signing_dir = /tmp/keystone-signing-nova
+auth_version = v2.0
+_EOF_
+</code></pre><p>修改 /etc/nova/nova.conf， 类似下面这样：</p>
+<pre><code>cat &gt; /etc/nova/nova.conf &lt;&lt; _EOD_
+[DEFAULT]
+# LOGS/STATE
+debug = False
+verbose = True
+logdir = /var/log/nova
+state_path = /var/lib/nova
+lock_path = /var/lock/nova
+rootwrap_config = /etc/nova/rootwrap.conf
+dhcpbridge = /usr/bin/nova-dhcpbridge
+# SCHEDULER
+compute_scheduler_driver = nova.scheduler.filter_scheduler.FilterScheduler
+## VOLUMES
+volume_api_class = nova.volume.cinder.API
+# DATABASE
+sql_connection = mysql://nova:nova@${YS_CON_MANAGE_IP}/nova
+# COMPUTE
+libvirt_type = kvm
+compute_driver = libvirt.LibvirtDriver
+instance_name_template = instance-%08x
+api_paste_config = /etc/nova/api-paste.ini
+# COMPUTE/APIS: if you have separate configs for separate services
+# this flag is required for both nova-api and nova-compute
+allow_resize_to_same_host = True
+# APIS
+osapi_compute_extension = nova.api.openstack.compute.contrib.standard_extensions
+ec2_dmz_host = ${YS_CON_MANAGE_IP}
+s3_host = ${YS_CON_MANAGE_IP}
+metadata_host = ${YS_CON_MANAGE_IP}
+metadata_listen = 0.0.0.0
+# RABBITMQ
+rabbit_host = ${YS_CON_MANAGE_IP}
+rabbit_password = guest
+# GLANCE
+image_service = nova.image.glance.GlanceImageService
+glance_api_servers = ${YS_CON_MANAGE_IP}:9292
+# NETWORK
+network_api_class = nova.network.quantumv2.api.API
+quantum_url = http://${YS_CON_MANAGE_IP}:9696
+quantum_auth_strategy = keystone
+quantum_admin_tenant_name = service
+quantum_admin_username = quantum
+quantum_admin_password = ${ADMIN_PASSWORD}
+quantum_admin_auth_url = http://${YS_CON_MANAGE_IP}:35357/v2.0
+service_quantum_metadata_proxy = True
+libvirt_vif_driver = nova.virt.libvirt.vif.LibvirtHybridOVSBridgeDriver
+linuxnet_interface_driver = nova.network.linux_net.LinuxOVSInterfaceDriver
+firewall_driver = nova.virt.libvirt.firewall.IptablesFirewallDriver
+# NOVNC CONSOLE
+novncproxy_base_url = http://${YS_CON_EXT_IP}:6080/vnc_auto.html
+# Change vncserver_proxyclient_address and vncserver_listen to match each compute host
+vncserver_proxyclient_address = ${YS_CON_EXT_IP}
+vncserver_listen = 0.0.0.0
+# AUTHENTICATION
+auth_strategy = keystone
+[keystone_authtoken]
+auth_host = $YS_CON_MANAGE_IP
+auth_port = 35357
+auth_protocol = http
+admin_tenant_name = service
+admin_user = nova
+admin_password = ${ADMIN_PASSWORD}
+signing_dir = /tmp/keystone-signing-nova
+_EOD_
+</code></pre><p>同步数据库，启动 nova 相关服务：</p>
+<pre><code>nova-manage db sync
+cd /etc/init.d/; for i in $( ls nova-* ); do sudo /etc/init.d/$i restart; done
+</code></pre><p>检查 nova 相关服务笑脸</p>
+<pre><code>nova-manage service list
+</code></pre><h3 id="安装WEB控制模块Horizon"><a href="#安装WEB控制模块Horizon" class="headerlink" title="安装WEB控制模块Horizon"></a>安装WEB控制模块Horizon</h3><p>安装Horizon</p>
+<pre><code>apt-get install -y openstack-dashboard memcached --force-yes
+</code></pre><p>如果你不喜欢 Ubuntu 的主题，可以禁用它，使用默认界面：</p>
+<pre><code>dpkg --purge openstack-dashboard-ubuntu-theme
+</code></pre><p>重启apache2和memcache</p>
+<pre><code>service apache2 restart; service memcached restart
+</code></pre><h3 id="安装完成"><a href="#安装完成" class="headerlink" title="安装完成"></a>安装完成</h3><p>现在可以通过浏览器 <a href="http://YS_CON_EXT_IP/horizon" target="_blank" rel="external">http://YS_CON_EXT_IP/horizon</a> 使用 admin:ADMIN_PASSWORD 来登录界面。</p>
+<h2 id="所有计算节点"><a href="#所有计算节点" class="headerlink" title="所有计算节点"></a>所有计算节点</h2><h3 id="基本环境变量配置-1"><a href="#基本环境变量配置-1" class="headerlink" title="基本环境变量配置"></a>基本环境变量配置</h3><pre><code>export YS_CON_MANAGE_IP=172.16.0.51
+export YS_CON_EXT_IP=59.65.233.231
+export YS_COM_MANAGE_IP=172.16.0.52
+export YS_COM_MANAGE_NETMASK=255.255.0.0
+export YS_COM_DATA_IP=10.10.10.52
+export YS_COM_DATA_NETMASK=255.255.255.0
+export YS_COM_EXT_IP=59.65.233.233
+export YS_COM_EXT_NETMASK=255.255.255.0
+export YS_COM_EXT_GATEWAY=59.65.233.254
+export YS_COM_EXT_DNS=202.204.65.5
+export YS_COM_SERVICE_ENDPOINT_IP=172.16.0.52
+export YS_COM_MYSQL_USER=root
+export YS_COM_MYSQL_PASS=123qwe
+export ADMIN_PASSWORD=123qwe
+export ADMIN_TOKEN=ceit
+</code></pre><h3 id="网络设置-1"><a href="#网络设置-1" class="headerlink" title="网络设置"></a>网络设置</h3><p>设置网卡信息</p>
+<pre><code>cat &gt; /etc/network/interfaces &lt;&lt; _EOF_
+auto eth0
+iface eth0 inet static
+address $YS_COM_MANAGE_IP
+netmask $YS_COM_MANAGE_NETMASK
+
+auto eth1
+iface eth1 inet static
+address $YS_COM_DATA_IP
+netmask $YS_COM_DATA_NETMASK
+
+auto eth2
+iface eth2 inet static
+address $YS_COM_EXT_IP
+netmask $YS_COM_EXT_NETMASK
+gateway $YS_COM_EXT_GATEWAY
+dns-nameservers $YS_COM_EXT_DNS
+_EOF_
+</code></pre><p>重启网络服务</p>
+<pre><code>/etc/init.d/networking restart
+</code></pre><h3 id="添加源-1"><a href="#添加源-1" class="headerlink" title="添加源"></a>添加源</h3><p>添加Ubuntu Grizzly源，并升级</p>
+<pre><code>cat &gt; /etc/apt/sources.list.d/grizzly.list &lt;&lt; _EOF_
+deb http://ubuntu-cloud.archive.canonical.com/ubuntu precise-updates/grizzly main
+deb  http://ubuntu-cloud.archive.canonical.com/ubuntu precise-proposed/grizzly main
+_EOF_
+apt-get update
+apt-get -y upgrade --force-yes
+apt-get install -y ubuntu-cloud-keyring
+</code></pre><h3 id="时间同步NTP-1"><a href="#时间同步NTP-1" class="headerlink" title="时间同步NTP"></a>时间同步NTP</h3><p>安装NTP并配置以计算节点为同步时钟</p>
+<pre><code>apt-get install -y ntp
+sed -i &apos;s/server ntp.ubuntu.com/server ${YS_CON_MANAGE_IP}/g&apos; /etc/ntp.conf
+service ntp restart
+</code></pre><h3 id="允许路由转发-1"><a href="#允许路由转发-1" class="headerlink" title="允许路由转发"></a>允许路由转发</h3><p>开启路由转发</p>
+<pre><code>sed -i &apos;s/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/&apos; /etc/sysctl.conf
+sysctl net.ipv4.ip_forward=1
+</code></pre><h3 id="安装OpenVSwitch"><a href="#安装OpenVSwitch" class="headerlink" title="安装OpenVSwitch"></a>安装OpenVSwitch</h3><p>安装OpenVSwitch，必须以下顺序</p>
+<pre><code>apt-get install -y openvswitch-datapath-source --force-yes
+module-assistant auto-install openvswitch-datapath
+apt-get install -y openvswitch-switch openvswitch-brcompat --force-yes
+</code></pre><p>设置 ovs-brcompatd 启动：</p>
+<pre><code>sed -i &apos;s/# BRCOMPAT=no/BRCOMPAT=yes/g&apos; /etc/default/openvswitch-switch
+echo &apos;brcompat&apos; &gt;&gt; /etc/modules
+</code></pre><p>启动 openvswitch-switch:</p>
+<pre><code>/etc/init.d/openvswitch-switch restart
+</code></pre><p>再次启动,直到 ovs-brcompatd、ovs-vswitchd、ovsdb-server等服务都启动：</p>
+<pre><code>/etc/init.d/openvswitch-switch restart
+</code></pre><p>直到检查出现：</p>
+<pre><code>lsmod | grep brcompat
+    brcompat               13512  0 
+    openvswitch            84038  7 brcompat
+</code></pre><p>如果还是启动不了的话，用下面命令：</p>
+<pre><code>/etc/init.d/openvswitch-switch force-reload-kmod
+</code></pre><p>创建网桥：</p>
+<pre><code>ovs-vsctl add-br br-int        # br-int 用于 vm 整合
+ovs-vsctl add-br br-ex              # br-ex 用于从互联网上访问 vm
+ovs-vsctl add-port br-ex eth2       # br-ex 桥接到 eth2
+</code></pre><p>做完上面操作后，如果用ssh连接到eth2的话一定会断开，到机器上修改配置文件：</p>
+<pre><code>ifconfig eth2 0
+ifconfig br-ex ${YS_COM_EXT_IP}/24
+route add default gw ${YS_COM_EXT_GATEWAY} dev br-ex
+echo &quot;nameserver ${YS_COM_EXT_DNS}&quot; &gt; /etc/resolv.conf
+
+cat &gt; /etc/network/interfaces &lt;&lt; _EOF_
+auto eth0
+iface eth0 inet static
+address $YS_COM_MANAGE_IP
+netmask $YS_COM_MANAGE_NETMASK
+
+auto eth1
+iface eth1 inet static
+address $YS_COM_DATA_IP
+netmask $YS_COM_DATA_NETMASK
+
+auto eth2
+iface eth2 inet manual
+up ifconfig \$IFACE 0.0.0.0 up
+up ip link set \$IFACE promisc on 
+down ip link set \$IFACE promisc off
+down ifconfig \$IFACE down
+
+auto br-ex
+iface br-ex inet static
+address $YS_COM_EXT_IP
+netmask $YS_COM_EXT_NETMASK
+gateway $YS_COM_EXT_GATEWAY
+dns-nameservers $YS_COM_EXT_DNS
+_EOF_
+</code></pre><p>重启网卡可能会出现：</p>
+<pre><code>/etc/init.d/networking restart
+RTNETLINK answers: File exists
+Failed to bring up br-ex.
+</code></pre><p>br-ex 可能有 ip 地址，但没有网关和 DNS，需要手工配置一下，或者重启机器. 重启机器后就正常了</p>
+<p>文档更新：发现网络节点的 eth2 网卡在系统重启后没有激活，写入到 rc.local中:</p>
+<pre><code>echo &apos;ifconfig eth2 up&apos; &gt;&gt; /etc/rc.local
+</code></pre><p>查看桥接的网络</p>
+<pre><code>ovs-vsctl list-br
+ovs-vsctl show
+</code></pre><h3 id="安装网络管理组件Quantum"><a href="#安装网络管理组件Quantum" class="headerlink" title="安装网络管理组件Quantum"></a>安装网络管理组件Quantum</h3><p>安装 Quantum openvswitch agent, metadata-agent l3 agent 和 dhcp agent</p>
+<pre><code>apt-get install -y quantum-plugin-openvswitch-agent quantum-dhcp-agent quantum-l3-agent quantum-metadata-agent --force-yes
+</code></pre><p>编辑 /etc/quantum/quantum.conf 文件：</p>
+<pre><code>while read line;
+do 
+pattern=`echo $line | awk &apos;{printf &quot;%s %s&quot;,$1,$2}&apos;`
+sed -i &quot;/$pattern/c $line&quot; /etc/quantum/quantum.conf;
+done &lt;&lt; _EOF_
+debug = True
+verbose = True
+rabbit_host = ${YS_CON_MANAGE_IP}
+rabbit_password = guest
+rabbit_port = 5672
+rabbit_userid = guest
+auth_host = ${YS_CON_MANAGE_IP}
+auth_port = 35357
+auth_protocol = http
+admin_tenant_name = service
+admin_user = quantum
+admin_password = ${ADMIN_PASSWORD}
+signing_dir = /var/lib/quantum/keystone-signing
+_EOF_
+</code></pre><p>编辑 OVS 插件配置文件 /etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini:</p>
+<pre><code>while read line;
+do 
+pattern=`echo $line | awk &apos;{printf &quot;%s %s&quot;,$1,$2}&apos;`
+sed -i &quot;/$pattern/c $line&quot; /etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini;
+done &lt;&lt; _EOF_
+sql_connection = mysql://quantum:quantum@${YS_CON_MANAGE_IP}/quantum
+tenant_network_type = gre
+enable_tunneling = True
+tunnel_id_ranges = 1:1000
+enable_tunneling = True
+local_ip = ${YS_COM_DATA_IP}
+integration_bridge = br-int
+tunnel_bridge = br-tun
+_EOF_
+</code></pre><p>编辑 /etc/quantum/l3_agent.ini:</p>
+<pre><code>cat &gt; /etc/quantum/l3_agent.ini &lt;&lt; _EOF_
+[DEFAULT]
+debug = True
+verbose = True
+use_namespaces = True
+external_network_bridge = br-ex
+signing_dir = /var/cache/quantum
+admin_tenant_name = service
+admin_user = quantum
+admin_password = ${ADMIN_PASSWORD}
+auth_url = http://${YS_CON_MANAGE_IP}:35357/v2.0
+l3_agent_manager = quantum.agent.l3_agent.L3NATAgentWithStateReport
+root_helper = sudo quantum-rootwrap /etc/quantum/rootwrap.conf
+interface_driver = quantum.agent.linux.interface.OVSInterfaceDriver
+enable_multi_host = True
+_EOF_
+</code></pre><p>编辑 /etc/quantum/dhcp_agent.ini:</p>
+<pre><code>cat &gt; /etc/quantum/dhcp_agent.ini &lt;&lt; _EOF_
+[DEFAULT]
+debug = True
+verbose = True
+use_namespaces = True
+signing_dir = /var/cache/quantum
+admin_tenant_name = service
+admin_user = quantum
+admin_password = ${ADMIN_PASSWORD}
+auth_url = http://${YS_CON_MANAGE_IP}:35357/v2.0
+dhcp_agent_manager = quantum.agent.dhcp_agent.DhcpAgentWithStateReport
+root_helper = sudo quantum-rootwrap /etc/quantum/rootwrap.conf
+state_path = /var/lib/quantum
+interface_driver = quantum.agent.linux.interface.OVSInterfaceDriver
+dhcp_driver = quantum.agent.linux.dhcp.Dnsmasq
+enable_multi_host = True
+enable_isolated_metadata = False
+_EOF_
+</code></pre><p>编辑 /etc/quantum/metadata_agent.ini：</p>
+<pre><code>cat &gt; /etc/quantum/metadata_agent.ini &lt;&lt; _EOF_
+[DEFAULT]
+debug = True
+auth_url = http://${YS_CON_MANAGE_IP}:35357/v2.0
+auth_region = RegionOne
+admin_tenant_name = service
+admin_user = quantum
+admin_password = ${ADMIN_PASSWORD}
+state_path = /var/lib/quantum
+nova_metadata_ip = ${YS_CON_MANAGE_IP}
+nova_metadata_port = 8775
+_EOF_
+</code></pre><p>启动 quantum 所有服务：</p>
+<pre><code>service quantum-plugin-openvswitch-agent restart
+service quantum-dhcp-agent restart
+service quantum-l3-agent restart
+service quantum-metadata-agent restart
+</code></pre><h3 id="安装虚拟化管理Nova"><a href="#安装虚拟化管理Nova" class="headerlink" title="安装虚拟化管理Nova"></a>安装虚拟化管理Nova</h3><p>安装 nova-compute:</p>
+<pre><code>apt-get install -y nova-compute --force-yes
+</code></pre><p>在 /etc/nova/api-paste.ini 中修改 autotoken 验证部分：</p>
+<pre><code>while read line;
+do 
+pattern=`echo $line | awk &apos;{printf &quot;%s %s&quot;,$1,$2}&apos;`
+sed -i &quot;/$pattern/c $line&quot; /etc/nova/api-paste.ini;
+done &lt;&lt; _EOF_
+auth_host = ${YS_CON_MANAGE_IP}
+auth_port = 35357
+auth_protocol = http
+admin_tenant_name = service
+admin_user = nova
+admin_password = ${ADMIN_PASSWORD}
+signing_dir = /tmp/keystone-signing-nova
+auth_version = v2.0
+_EOF_
+</code></pre><p>修改 /etc/nova/nova.conf， 类似下面这样：</p>
+<pre><code>cat &gt; /etc/nova/nova.conf &lt;&lt; _EOF_
+[DEFAULT]
+# LOGS/STATE
+debug = False
+verbose = True
+logdir = /var/log/nova
+state_path = /var/lib/nova
+lock_path = /var/lock/nova
+rootwrap_config = /etc/nova/rootwrap.conf
+dhcpbridge = /usr/bin/nova-dhcpbridge
+# SCHEDULER
+compute_scheduler_driver = nova.scheduler.filter_scheduler.FilterScheduler
+## VOLUMES
+volume_api_class = nova.volume.cinder.API
+osapi_volume_listen_port=5900
+# DATABASE
+sql_connection = mysql://nova:nova@${YS_CON_MANAGE_IP}/nova
+# COMPUTE
+libvirt_type = kvm
+compute_driver = libvirt.LibvirtDriver
+instance_name_template = instance-%08x
+api_paste_config = /etc/nova/api-paste.ini
+# COMPUTE/APIS: if you have separate configs for separate services
+# this flag is required for both nova-api and nova-compute
+allow_resize_to_same_host = True
+# APIS
+osapi_compute_extension = nova.api.openstack.compute.contrib.standard_extensions
+ec2_dmz_host = ${YS_CON_MANAGE_IP}
+s3_host = ${YS_CON_MANAGE_IP}
+metadata_host=${YS_CON_MANAGE_IP}
+metadata_listen=0.0.0.0
+# RABBITMQ
+rabbit_host = ${YS_CON_MANAGE_IP}
+rabbit_password = guest
+# GLANCE
+image_service = nova.image.glance.GlanceImageService
+glance_api_servers = ${YS_CON_MANAGE_IP}:9292
+# NETWORK
+network_api_class = nova.network.quantumv2.api.API
+quantum_url = http://${YS_CON_MANAGE_IP}:9696
+quantum_auth_strategy = keystone
+quantum_admin_tenant_name = service
+quantum_admin_username = quantum
+quantum_admin_password = ${ADMIN_PASSWORD}
+quantum_admin_auth_url = http://${YS_CON_MANAGE_IP}:35357/v2.0
+service_quantum_metadata_proxy = True
+libvirt_vif_driver = nova.virt.libvirt.vif.LibvirtHybridOVSBridgeDriver
+linuxnet_interface_driver = nova.network.linux_net.LinuxOVSInterfaceDriver
+firewall_driver = nova.virt.libvirt.firewall.IptablesFirewallDriver
+# NOVNC CONSOLE
+novncproxy_base_url = http://${YS_CON_EXT_IP}:6080/vnc_auto.html
+# Change vncserver_proxyclient_address and vncserver_listen to match each compute host
+vncserver_proxyclient_address = ${YS_COM_EXT_IP}
+vncserver_listen = 0.0.0.0
+# AUTHENTICATION
+auth_strategy = keystone
+[keystone_authtoken]
+auth_host = ${YS_CON_MANAGE_IP}
+auth_port = 35357
+auth_protocol = http
+admin_tenant_name = service
+admin_user = nova
+admin_password = ${ADMIN_PASSWORD}
+signing_dir = /tmp/keystone-signing-nova
+_EOF_
+</code></pre><p>启动 nova-compute 服务：</p>
+<pre><code>service nova-compute restart
+</code></pre><p>检查 nova 相关服务笑脸，找到计算节点：</p>
+<pre><code>nova-manage service list
+</code></pre><h2 id="创建一个虚拟机"><a href="#创建一个虚拟机" class="headerlink" title="创建一个虚拟机"></a>创建一个虚拟机</h2><p>创建一个新的tenant</p>
+<pre><code>keystone tenant-create --name project_one
+</code></pre><p>创建一个新用户以及给其赋予角色</p>
+<pre><code>keystone user-create --name=user_one --pass=user_one --tenant-id $put_id_of_project_one --email=user_one@domain.com
+keystone user-role-add --tenant-id $put_id_of_project_one  --user-id $put_id_of_user_one --role-id $put_id_of_member_role
+</code></pre><p>创建一个新的网络</p>
+<pre><code>quantum net-create --tenant-id $put_id_of_project_one net_proj_one
+</code></pre><p>创建一个新的子网</p>
+<pre><code>quantum subnet-create --tenant-id $put_id_of_project_one net_proj_one 50.50.1.0/24
+</code></pre><p>创建一个路由</p>
+<pre><code>quantum router-create --tenant-id $put_id_of_project_one router_proj_one
+</code></pre><p>增加路由到三层代理</p>
+<pre><code>quantum agent-list (to get the l3 agent ID)
+quantum l3-agent-router-add $l3_agent_ID router_proj_one    
+</code></pre><p>增加路由到子网</p>
+<pre><code>quantum router-interface-add $put_router_proj_one_id_here $put_subnet_id_here
+</code></pre><p>重启quantum服务</p>
+<pre><code>cd /etc/init.d/; for i in $( ls quantum-* ); do sudo service $i restart; done
+</code></pre><p>创建一个外网到admin tenant</p>
+<pre><code>quantum net-create --tenant-id $put_id_of_admin_tenant ext_net --router:external=True
+</code></pre><p>为浮动ip创建子网</p>
+<pre><code>quantum subnet-create --tenant-id $put_id_of_admin_tenant --allocation-pool start=59.65.233.231,end=59.65.233.234 --gateway 59.65.233.254 ext_net 59.65.233.0/24 --enable_dhcp=False
+</code></pre><p>设置路由到外网网络</p>
+<pre><code>quantum router-gateway-set $put_router_proj_one_id_here $put_id_of_ext_net_here
+</code></pre><p>增加tenant环境变量</p>
+<pre><code>nano creds_proj_one
+
+#Paste the following:
+export OS_TENANT_NAME=project_one
+export OS_USERNAME=user_one
+export OS_PASSWORD=user_one
+export OS_AUTH_URL=&quot;http://59.65.233.231:5000/v2.0/&quot;
+
+source creds_proj_one
+</code></pre><p>增加安全规则</p>
+<pre><code>nova --no-cache secgroup-add-rule default icmp -1 -1 0.0.0.0/0
+nova --no-cache secgroup-add-rule default tcp 22 22 0.0.0.0/0
+</code></pre><p>分配一个浮动ip</p>
+<pre><code>quantum floatingip-create ext_net
+</code></pre><p>启动一个虚拟机</p>
+<pre><code>nova --no-cache boot --image $id_myFirstImage --flavor 1 my_first_vm
+</code></pre><p>选择合适的端口到虚拟机：</p>
+<pre><code>quantum port-list
+</code></pre><p>将浮动ip分配给虚拟机</p>
+<pre><code>quantum floatingip-associate $put_id_floating_ip $put_id_vm_port
+</code></pre><h2 id="开启端口"><a href="#开启端口" class="headerlink" title="开启端口"></a>开启端口</h2><ul>
+<li>TCP 22 (ssh)</li>
+<li>ICMP -1 (ping)</li>
+<li>TCP 3306 (mysql)</li>
+<li>TCP 3389 (远程桌面)</li>
+</ul>
+<h2 id="修改bug"><a href="#修改bug" class="headerlink" title="修改bug"></a>修改bug</h2><p>quantum里面有一个bug，这个环境重启以后nova会无法启动，参考<a href="http://blog.sina.com.cn/s/blog_6de3aa8a0101lnar.html" target="_blank" rel="external">aass</a>修改源码可以解决</p>
+<p>修改计算节点/usr/share/pyshared/nova/virt/libvirt/vif.py第360行所在函数</p>
+<pre><code>def plug_ovs_hybrid(self, instance, vif):
+    network, mapping = vif
+    iface_id = self.get_ovs_interfaceid(mapping)
+    br_name = self.get_br_name(mapping[&apos;vif_uuid&apos;])
+    v1_name, v2_name = self.get_veth_pair_names(mapping[&apos;vif_uuid&apos;])
+
+    if not linux_net.device_exists(br_name):
+        utils.execute(&apos;brctl&apos;, &apos;addbr&apos;, br_name, run_as_root=True)
+        utils.execute(&apos;brctl&apos;, &apos;setfd&apos;, br_name, 0, run_as_root=True)
+        utils.execute(&apos;brctl&apos;, &apos;stp&apos;, br_name, &apos;off&apos;, run_as_root=True)
+
+    if not linux_net.device_exists(v2_name):
+        linux_net._create_veth_pair(v1_name, v2_name)
+        utils.execute(&apos;ip&apos;, &apos;link&apos;, &apos;set&apos;, br_name, &apos;up&apos;, run_as_root=True)
+        try:
+            v1_tap=&quot;tap&quot;+br_name[3:]
+            try:
+                utils.execute(&apos;ovs-vsctl&apos;, &apos;del-port&apos;, br_name, v1_tap, run_as_root=True)
+            except Exception,e:
+                pass
+            utils.execute(&apos;brctl&apos;, &apos;addif&apos;, br_name, v1_name, run_as_root=True)
+        except Exception,e:
+            pass
+        linux_net.create_ovs_vif_port(self.get_bridge_name(network),
+                                      v2_name, iface_id, mapping[&apos;mac&apos;],
+                                      instance[&apos;uuid&apos;])
+</code></pre><h2 id="其他可能问题"><a href="#其他可能问题" class="headerlink" title="其他可能问题"></a>其他可能问题</h2><h3 id="网卡配置问题"><a href="#网卡配置问题" class="headerlink" title="网卡配置问题"></a>网卡配置问题</h3><p>装完系统发现网卡竟然不亮，主要是服务器上有5个网卡，而我们只用到2-3个，结果是啥？结果就是配置了eth0和eth1，你却插到了eth5和eth6……</p>
+<p>解决方法是利用ubuntu下的mii-tool命令，一个一个排查，看看是否插对了网卡</p>
+<h3 id="配置子网的问题"><a href="#配置子网的问题" class="headerlink" title="配置子网的问题"></a>配置子网的问题</h3><p>多个网卡意味着多个网段，在/etc/network/interfaces下是不能配置多个gateway的，解决的方式就是通过增加静态路由，这个可以参考网上的方式</p>
+<p>发现子网没法访问，可以使用route add -net 172.16.0.0/16 dev eth0 来增加网络访问</p>
+<p>这个问题可以通过route来查看自己网络的联通情况</p>
+<h3 id="终端命令行问题"><a href="#终端命令行问题" class="headerlink" title="终端命令行问题"></a>终端命令行问题</h3><p>1.执行keystone user-list时，遇到错误“Invalid Openstack Identity credentials”.</p>
+<p>解决：/etc/keystone/keystone.conf里的admin_token要与环境变量SERVICE_TOKEN相同值。</p>
+<p>2.执行nova flavor-list时，遇到错误”Invalid Openstack Nova Credentials.”</p>
+<p>解决：环境变量OS_USERNAME, OS_PASSWORD, OS_TENANT_NAME等指定的username，passowrd，tenant应该存在于keystone里，如上所述。可以通过nova –debug flavor-list获得调试信息。</p>
+<p>3.使用ubuntu官网镜像时需要使用密钥才能登录</p>
+<p>创建密钥<br>ssh-keygen<br>上传密钥<br>nova keypair-add –pub_key .ssh/id_rsa.pub key1<br>创建虚拟机时选择相应密钥<br>使用密钥登录<br>ssh -i .ssh/id_rsa ubuntu@192.168.22.35</p>
+<p>4.网络虚拟机里不能git clone<br>修改mtu值<br>sudo ifconfig eth0 mtu 1000</p>
+
+      
+    </div>
+</article>
+
+<p>
+    <a href="javascript:void(0)" class="dashang" onclick="dashangToggle()">赏</a>
+</p>
+
+
+<div class="article_copyright">
+    <p><span>文章标题:</span>OpenStack Grizzly Multihost部署文档</p>
+    
+    <p><span>本文作者:</span><a href="javascript:void(0)" title="Allen">Allen</a></p>
+    <p><span>发布时间:</span>2017-06-20, 15:24:10</p>
+    <p><span>最后更新:</span>2017-06-20, 14:35:12</p>
+    <span>原始链接:</span><a class="post-url" href="/2017/06/20/tech/2013-05-13-openstack-grizzly-multihost-deployment-doc/" title="OpenStack Grizzly Multihost部署文档">http://yoursite.com/2017/06/20/tech/2013-05-13-openstack-grizzly-multihost-deployment-doc/</a>
+    <p>
+        <span>版权声明:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+    </p>
+</div>
+
+
+    
+    <section id="comments" class="disqus">
+    <style> aside.comment-bar { margin: auto 30px; }</style>
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function(){
+            this.page.url = 'http://yoursite.com/2017/06/20/tech/2013-05-13-openstack-grizzly-multihost-deployment-doc/';
+            this.page.identifier = '2017/06/20/tech/2013-05-13-openstack-grizzly-multihost-deployment-doc/';
+        };
+        var loadComment = function(){
+            var d = document, s = d.createElement('script');
+            s.src = '//yelog.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        }
+    </script>
+    
+    <aside class="comment-bar">
+        <a href="javascript:void(0);">
+            <i class="fa fa-commenting-o animated infinite pulse"></i>
+            <i class="fa fa-spinner fa-pulse"></i>
+            <span class="count-comment"></span>
+        </a>
+    </aside>
+    <script>
+        var isLoadComments = false;
+        var $commentBar = $("#comments aside.comment-bar");
+        var load$hide = function(){
+            if(isLoadComments){
+                return;
+            }
+            isLoadComments = true;
+            if(isLoadComments )
+            $commentBar.find("a > i").toggle();
+            
+            loadComment();
+            
+            $commentBar.fadeOut(800);
+        }
+        $commentBar.click(function(){
+            load$hide();
+        })
+        $commentBar.children("a").mouseenter(function(){
+            load$hide();
+        })
+    </script>
+
+</section>
+
+<!-- Add comment count-->
+<span class="disqus-comment-count" style="display: none" data-disqus-identifier="2017/06/20/tech/2013-05-13-openstack-grizzly-multihost-deployment-doc/"></span>
+<span class="disqus-comment-count" style="display: none" data-disqus-url="http://yoursite.com/2017/06/20/tech/2013-05-13-openstack-grizzly-multihost-deployment-doc/"></span>
+    
+
+    </div>
+    <div class="copyright">
+        <p class="footer-entry">©2017 Yelog</p>
+<p class="footer-entry">Buit with <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/yelog/hexo-theme-3-hexo" target="_blank">3-hexo</a> theme</p>
+
+    </div>
+</div>
+<div class="full-toc">
+    <button class="full"><span class="min "></span></button>
+<button class="post-toc-menu"><span class="post-toc-menu-icons"></span></button>
+<div class="post-toc"><span class="post-toc-title">目录</span>
+    <div class="post-toc-content">
+
+    </div>
+</div>
+<a class="" id="rocket" href="javascript:void(0)"></a>
+</div>
+<div class="acParent"></div>
+<div class="hide_box" onclick="dashangToggle()"></div>
+<div class="shang_box">
+    <a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()">×</a>
+    <div class="shang_tit">
+        <p>喜欢就点赞,疼爱就打赏</p>
+    </div>
+    <div class="shang_payimg">
+        <div class="pay_img">
+            <img src="/img/alipay.jpg" class="alipay" title="扫码支持">
+            <img src="/img/weixin.jpg" class="weixin" title="扫码支持">
+        </div>
+    </div>
+    <div class="shang_payselect">
+        <span><label><input type="radio" name="pay" checked value="alipay">支付宝</label></span><span><label><input type="radio" name="pay" value="weixin">微信</label></span>
+    </div>
+</div>
+</body>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.pjax/1.9.6/jquery.pjax.min.js"></script>
+<script src="/js/script.js"></script>
+<script>
+    $(function () {
+        $('.search').AutoComplete({
+            'data': ['#Git','#Bootstrap','#HTML','#PHP','#jQuery','#JavaScript','#Python','#SVN','#MySQL','#Mac','#Shell','#SEO','#Vim','#Windows','#Linux','#Sublime','#Jekyll','#Blog','#MongoDB','#Tool','#Vagrant','#Tools','#Docker','#OpenStack','#Virtualization','#Concept','#CSS','#Apache','#Nginx','#Laravel','#算法','#React','#Pattern',],
+            'itemHeight': 20,
+            'width': 418
+        }).AutoComplete('show');
+    })
+    function initArticle() {
+        
+            $(".post .pjax table").addClass("green_title");
+        
+        
+        $("input[name=pay]").on("click", function () {
+            if($("input[name=pay]:checked").val()=="weixin"){
+                $(".shang_box .shang_payimg .pay_img").addClass("weixin_img");
+            } else {
+                $(".shang_box .shang_payimg .pay_img").removeClass("weixin_img");
+            }
+        })
+        
+        
+        
+        $.getScript("//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js");
+        
+    }
+    
+    function dashangToggle() {
+        $(".shang_box").fadeToggle();
+        $(".hide_box").fadeToggle();
+    }
+    
+</script>
+
+<!--自定义样式设置-->
+<style>
+    
+    .nav-right nav a.hover{
+        background-color: #e2e0e0;
+    }
+    
+    
+
+</style>
+</html>

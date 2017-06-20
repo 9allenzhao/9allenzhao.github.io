@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Docker 使用总结 | Allen&#39;s BLOG</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Docker 基本概念镜像 Image镜像是一些打包好的已有的环境，可以被用来启动和创建容器，本身不能被直接修改。 容器 Container容器是镜像的实例化，是可以修改的，但是都是临时修改。 容器启动过程 检查本地是否存在指定的镜像，不存在就从公有仓库下载 利用镜像创建并启动一个容器 分配一个文件系统，并在只读的镜像层外面挂载一层可读写层 从宿主主机配置的网桥接口中桥接一个虚拟接口到容器中去 从">
+<meta name="keywords" content="Docker">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker 使用总结">
+<meta property="og:url" content="http://yoursite.com/2017/06/20/tool/2017-02-21-docker-summary/index.html">
+<meta property="og:site_name" content="Allen&#39;s BLOG">
+<meta property="og:description" content="Docker 基本概念镜像 Image镜像是一些打包好的已有的环境，可以被用来启动和创建容器，本身不能被直接修改。 容器 Container容器是镜像的实例化，是可以修改的，但是都是临时修改。 容器启动过程 检查本地是否存在指定的镜像，不存在就从公有仓库下载 利用镜像创建并启动一个容器 分配一个文件系统，并在只读的镜像层外面挂载一层可读写层 从宿主主机配置的网桥接口中桥接一个虚拟接口到容器中去 从">
+<meta property="og:updated_time" content="2017-06-20T06:35:12.460Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Docker 使用总结">
+<meta name="twitter:description" content="Docker 基本概念镜像 Image镜像是一些打包好的已有的环境，可以被用来启动和创建容器，本身不能被直接修改。 容器 Container容器是镜像的实例化，是可以修改的，但是都是临时修改。 容器启动过程 检查本地是否存在指定的镜像，不存在就从公有仓库下载 利用镜像创建并启动一个容器 分配一个文件系统，并在只读的镜像层外面挂载一层可读写层 从宿主主机配置的网桥接口中桥接一个虚拟接口到容器中去 从">
+  
+  
+    <link rel="icon" href="/img/avatar.jpg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <link rel="stylesheet" href="/css/hl_theme/darcula.css">
+  
+  <link href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script src="/js/jquery.autocomplete.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad();
+  </script>
+  
+    <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  <script id="dsq-count-scr" src="//yelog.disqus.com/count.js" async></script>
+  
+</head>
+<div style="display: none">
+  <input class="theme_disqus_on" value="true">
+  <input class="theme_duoshuo_on" value="false">
+  <input class="theme_preload_comment" value="false">
+  <input class="theme_duoshuo_domain" value="jaytp">
+</div>
+<body>
+<aside class="nav">
+    <div class="nav-left">
+        <a href="/" class="avatar" style="background-image:url(/img/avatar.jpg)"></a>
+<div class="author">
+    <span>Allen</span>
+</div>
+<div class="icon">
+    
+    <a class="rss" title="rss" href="/atom.xml" target="_blank"></a>
+    
+    
+    <a class="github" title="github" href="https://github.com/yelog" target="_blank"></a>
+    
+    
+    <a class="facebook" title="facebook" href="https://www.facebook.com/faker.tops" target="_blank"></a>
+    
+    
+    
+    <a class="linkedin" title="linkedin" href="https://www.linkedin.com/in/%E7%8E%89%E6%9D%B0-%E6%9D%A8-13a40a103/" target="_blank"></a>
+    
+    
+    
+    <a class="reddit" title="reddit" href="https://www.reddit.com/user/yelog/" target="_blank"></a>
+    
+    
+    <a class="weibo" title="weibo" href="http://weibo.com/u/2307534817" target="_blank"></a>
+    
+    
+    <a class="email" title="email" href="mailto:jaytp@qq.com"></a>
+    
+</div>
+<ul>
+    <li class="all active">全部文章</li>
+    
+    <li data-rel="读书"> 读书 </li>
+    
+    <li data-rel="资源"> 资源 </li>
+    
+    <li data-rel="工具"> 工具 </li>
+    
+    <li data-rel="技术"> 技术 </li>
+    
+</ul>
+<input type="hidden" id="yelog_site_posts_number" value="107">
+
+<div style="display: none">
+    <span id="busuanzi_value_site_uv"></span>
+    <span id="busuanzi_value_site_pv"></span>
+</div>
+    </div>
+    <div class="nav-right">
+        <form onkeydown="if(event.keyCode==13){return false;}">
+    <input class="search" type="text" placeholder="Search..." autocomplete="off">
+    <i class="cross"></i>
+    <span>
+        <label for="tagswitch">Tags:</label>
+        <input id="tagswitch" type="checkbox">
+    </span>
+</form>
+<ul class="tags-list">
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color4">Git</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color5">Bootstrap</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color5">HTML</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color4">PHP</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color2">jQuery</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color1">JavaScript</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color2">Python</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color4">SVN</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color1">MySQL</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color4">Mac</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color1">Shell</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color4">SEO</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color4">Vim</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color3">Windows</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color1">Linux</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color3">Sublime</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color2">Jekyll</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color5">Blog</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color3">MongoDB</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color5">Tool</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color3">Vagrant</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color1">Tools</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color2">Docker</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color5">OpenStack</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color5">Virtualization</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color3">Concept</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color4">CSS</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color2">Apache</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color1">Nginx</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color3">Laravel</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color3">算法</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color1">React</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color3">Pattern</a>
+    </li>
+    
+    <div class="clearfix"></div>
+</ul>
+
+<nav>
+    
+    <a  class=""
+       href="/2017/06/20/hello-world/"
+       data-tag=""
+       data-author="" >
+        <span class="post-title" title="Hello World">Hello World</span>
+        <span class="post-date" title="2017-06-20 15:20:58">2017/06/20</span>
+    </a>
+    
+    <a  class="读书 "
+       href="/2017/06/20/book/2014-03-14-book-list-of-2014/"
+       data-tag=""
+       data-author="" >
+        <span class="post-title" title="2014阅读书单">2014阅读书单</span>
+        <span class="post-date" title="2017-06-20 15:23:40">2017/06/20</span>
+    </a>
+    
+    <a  class="读书 "
+       href="/2017/06/20/book/2013-12-20-book-list-of-2013/"
+       data-tag=""
+       data-author="" >
+        <span class="post-title" title="2013阅读书单">2013阅读书单</span>
+        <span class="post-date" title="2017-06-20 15:23:40">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2014-01-15-general-git-resources/"
+       data-tag="Git"
+       data-author="" >
+        <span class="post-title" title="Git 常用资源">Git 常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2013-04-23-general-bootstrap-resources/"
+       data-tag="Bootstrap"
+       data-author="" >
+        <span class="post-title" title="Bootstrap常用资源">Bootstrap常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2014-01-15-general-html-resources/"
+       data-tag="HTML"
+       data-author="" >
+        <span class="post-title" title="HTML 常用资源">HTML 常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2014-01-15-general-php-resources/"
+       data-tag="PHP"
+       data-author="" >
+        <span class="post-title" title="PHP 常用资源">PHP 常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2014-01-15-general-jquery-resources/"
+       data-tag="jQuery"
+       data-author="" >
+        <span class="post-title" title="jQuery 常用资源">jQuery 常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2014-01-15-general-javascript-resources/"
+       data-tag="JavaScript"
+       data-author="" >
+        <span class="post-title" title="JavaScript 常用资源">JavaScript 常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2014-01-15-general-python-resources/"
+       data-tag="Python"
+       data-author="" >
+        <span class="post-title" title="Python 常用资源">Python 常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2014-01-15-general-svn-resources/"
+       data-tag="SVN"
+       data-author="" >
+        <span class="post-title" title="SVN 常用资源">SVN 常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2014-05-11-general-mysql-resources/"
+       data-tag="MySQL"
+       data-author="" >
+        <span class="post-title" title="MySQL常用资源">MySQL常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2014-08-03-general-mac-resources/"
+       data-tag="Mac"
+       data-author="" >
+        <span class="post-title" title="Mac 常用资源">Mac 常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2014-01-15-general-shell-resources/"
+       data-tag="Shell"
+       data-author="" >
+        <span class="post-title" title="Shell 常用资源">Shell 常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2015-02-13-general-seo-resources/"
+       data-tag="SEO"
+       data-author="" >
+        <span class="post-title" title="SEO 常用资源">SEO 常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="资源 "
+       href="/2017/06/20/resource/2015-10-04-general-vim-resources/"
+       data-tag="Vim"
+       data-author="" >
+        <span class="post-title" title="Vim 常用资源">Vim 常用资源</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2012-12-30-share-windows-and-linux/"
+       data-tag="Windows,Linux"
+       data-author="" >
+        <span class="post-title" title="Windows和Linux切换最终解决方案">Windows和Linux切换最终解决方案</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-01-16-create-remote-resp/"
+       data-tag="Git"
+       data-author="" >
+        <span class="post-title" title="git创建远程库">git创建远程库</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-01-09-remote-access-of-mysql/"
+       data-tag="MySQL"
+       data-author="" >
+        <span class="post-title" title="MySQL远程访问">MySQL远程访问</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-02-25-quick-open-in-windows/"
+       data-tag="Windows"
+       data-author="" >
+        <span class="post-title" title="win7快速打开应用程序或文件">win7快速打开应用程序或文件</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-03-25-open-tcp-port-of-libvirt/"
+       data-tag="Linux"
+       data-author="" >
+        <span class="post-title" title="Linux下开启Libvirtd的tcp监控">Linux下开启Libvirtd的tcp监控</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-03-25-tools-of-sever-deployment/"
+       data-tag="Linux"
+       data-author="" >
+        <span class="post-title" title="服务器自动化部署及运维常见工具">服务器自动化部署及运维常见工具</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-04-21-add-snippet/"
+       data-tag="Sublime"
+       data-author="" >
+        <span class="post-title" title="给sublime增加snippet">给sublime增加snippet</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-04-22-add-svn-ignore-file/"
+       data-tag="SVN"
+       data-author="" >
+        <span class="post-title" title="给SVN控制的项目添加忽略文件/文件夹">给SVN控制的项目添加忽略文件/文件夹</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-04-22-highlight-of-jekyll/"
+       data-tag="Jekyll"
+       data-author="" >
+        <span class="post-title" title="Jekyll的中的代码高亮">Jekyll的中的代码高亮</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-04-22-ignore-password-in-git-push/"
+       data-tag="Git"
+       data-author="" >
+        <span class="post-title" title="让git push命令不再需要密码">让git push命令不再需要密码</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-05-20-set-proxy-for-git-or-apt/"
+       data-tag="Git"
+       data-author="" >
+        <span class="post-title" title="给Git或者APT设置goagent代理">给Git或者APT设置goagent代理</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-04-22-wordpress-to-jekyll/"
+       data-tag="Blog"
+       data-author="" >
+        <span class="post-title" title="博客迁移完成">博客迁移完成</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-05-23-install-mysql-and-mongo-web-admin/"
+       data-tag="MySQL,Linux,MongoDB"
+       data-author="" >
+        <span class="post-title" title="安装MySQL和MongoDB的WEB管理界面">安装MySQL和MongoDB的WEB管理界面</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-05-22-change-to-zsh/"
+       data-tag="Mac"
+       data-author="" >
+        <span class="post-title" title="从Bash切换到Zsh">从Bash切换到Zsh</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-08-04-something-about-tools-i-used/"
+       data-tag="Tool"
+       data-author="" >
+        <span class="post-title" title="我与工具">我与工具</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-08-06-tools-of-reading/"
+       data-tag="Tool"
+       data-author="" >
+        <span class="post-title" title="我与工具--阅读和知识管理">我与工具--阅读和知识管理</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-08-28-change-bootstrap-to-3/"
+       data-tag="Blog"
+       data-author="" >
+        <span class="post-title" title="更新前端框架到Bootstrap3">更新前端框架到Bootstrap3</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-12-08-linux-command-continue/"
+       data-tag="Linux"
+       data-author="" >
+        <span class="post-title" title="Linux下多个命令连续执行方法">Linux下多个命令连续执行方法</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-12-11-deploy-pptp-vpn-in-ubuntu/"
+       data-tag="Linux"
+       data-author="" >
+        <span class="post-title" title="在ubuntu下搭建pptp vpn服务器">在ubuntu下搭建pptp vpn服务器</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2013-12-11-lamp-in-mac/"
+       data-tag="PHP,Mac,MongoDB"
+       data-author="" >
+        <span class="post-title" title="Mac下用brew搭建LNMP和LAMP开发环境">Mac下用brew搭建LNMP和LAMP开发环境</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2014-03-20-php-debug-with-xdebug/"
+       data-tag="PHP"
+       data-author="" >
+        <span class="post-title" title="用Xdebug和Sublime调试PHP代码">用Xdebug和Sublime调试PHP代码</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2014-02-12-how-to-deploy-a-blog-on-github-by-jekyll/"
+       data-tag="Jekyll"
+       data-author="" >
+        <span class="post-title" title="在Github上搭建Jekyll博客和创建主题">在Github上搭建Jekyll博客和创建主题</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2014-04-10-install-vagrant-in-mac/"
+       data-tag="Mac,Vagrant"
+       data-author="" >
+        <span class="post-title" title="在Mac下安装使用Vagrant">在Mac下安装使用Vagrant</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2015-01-10-use-dropzone-and-qiniu-to-store-blog-images/"
+       data-tag="Blog"
+       data-author="" >
+        <span class="post-title" title="使用Dropzone和七牛优化博客图床">使用Dropzone和七牛优化博客图床</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2016-11-09-my-writing-tools/"
+       data-tag="Tools"
+       data-author="" >
+        <span class="post-title" title="我使用的收藏，写作和分享工具">我使用的收藏，写作和分享工具</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2016-12-30-deploy-l2tp-on-ubuntu/"
+       data-tag="Tools"
+       data-author="" >
+        <span class="post-title" title="在 Ubuntu 下部署 L2TP VPN">在 Ubuntu 下部署 L2TP VPN</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2016-12-31-deploy-shadowsocks-on-ubuntu/"
+       data-tag="Tools"
+       data-author="" >
+        <span class="post-title" title="在 Ubuntu 下部署 Shadowsocks">在 Ubuntu 下部署 Shadowsocks</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2017-01-14-install-hhvm-on-mac-with-docker/"
+       data-tag="Mac,Docker"
+       data-author="" >
+        <span class="post-title" title="在 Mac 下用 Docker 安装测试 HHVM">在 Mac 下用 Docker 安装测试 HHVM</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="工具 "
+       href="/2017/06/20/tool/2017-02-21-docker-summary/"
+       data-tag="Docker"
+       data-author="" >
+        <span class="post-title" title="Docker 使用总结">Docker 使用总结</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2012-09-27-open-widown-in-javascript/"
+       data-tag="JavaScript"
+       data-author="" >
+        <span class="post-title" title="JS中防止浏览器屏蔽window.open">JS中防止浏览器屏蔽window.open</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2012-11-08-openstack-nova-internal/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="OpenStack Nova内部机制【译】">OpenStack Nova内部机制【译】</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2012-09-19-php-session-security/"
+       data-tag="PHP"
+       data-author="" >
+        <span class="post-title" title="PHP Session 原理及安全性提升">PHP Session 原理及安全性提升</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2012-09-27-php-variable-variables/"
+       data-tag="PHP"
+       data-author="" >
+        <span class="post-title" title="PHP可变变量">PHP可变变量</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2012-12-31-python-development-of-sae/"
+       data-tag="Python"
+       data-author="" >
+        <span class="post-title" title="sae下的python开发部署和一个简单例子">sae下的python开发部署和一个简单例子</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-01-30-command-of-kanyun/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="kanyun的api-client命令">kanyun的api-client命令</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-01-30-introduction-kanyun-server/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="kanyun server服务">kanyun server服务</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-01-30-deploy-kanyun/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="在OpenStack中部署kanyun">在OpenStack中部署kanyun</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-01-30-introduction-of-kanyun-worker/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="kanyun worker原理">kanyun worker原理</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-02-24-javascript-variable-domain/"
+       data-tag="JavaScript"
+       data-author="" >
+        <span class="post-title" title="JavaScript变量作用域">JavaScript变量作用域</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-03-20-debug-and-modify-openstack-horizon/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="调试和修改OpenStack中的Horizon部分">调试和修改OpenStack中的Horizon部分</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-03-20-different-bewteen-kvm-xen-qemu/"
+       data-tag="Virtualization"
+       data-author="" >
+        <span class="post-title" title="虚拟化中KVM, Xen, Qemu的区别">虚拟化中KVM, Xen, Qemu的区别</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-03-21-introduction-of-ceilometer/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="OpenStack Ceilometer项目简介">OpenStack Ceilometer项目简介</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-03-21-vnc-vs-rdp/"
+       data-tag="Virtualization"
+       data-author="" >
+        <span class="post-title" title="VNC和远程桌面的区别">VNC和远程桌面的区别</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-03-27-glossary-of-ceilometer/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="OpenStack Ceilometer的一些术语">OpenStack Ceilometer的一些术语</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-04-25-conceptual-logical-physical/"
+       data-tag="Concept"
+       data-author="" >
+        <span class="post-title" title="概念模型、逻辑模型、物理模型的区别">概念模型、逻辑模型、物理模型的区别</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-04-23-opensource-licenses/"
+       data-tag="Concept"
+       data-author="" >
+        <span class="post-title" title="五种常见的开源协议整理">五种常见的开源协议整理</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-04-25-some-concept-about-enterprise-storage/"
+       data-tag="Concept"
+       data-author="" >
+        <span class="post-title" title="几种企业的存储系统">几种企业的存储系统</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-04-26-create-windows-xp-image-for-openstack/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="给OpenStack创建Windows XP镜像">给OpenStack创建Windows XP镜像</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-01-deploy-a-ceilometer-horizon-project/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="部署一个ceilometer-horizon项目">部署一个ceilometer-horizon项目</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-01-terminal-command-of-ceilometer/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="Ceilometer的命令行使用">Ceilometer的命令行使用</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-03-create-windows-7-image-for-openstack/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="给OpenStack创建Win7镜像">给OpenStack创建Win7镜像</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-03-php-cache-of-a-page/"
+       data-tag="PHP"
+       data-author="" >
+        <span class="post-title" title="页面提速之——数据缓存">页面提速之——数据缓存</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-06-interactive-coding-ipython/"
+       data-tag="Python"
+       data-author="" >
+        <span class="post-title" title="交互式编程-IPython">交互式编程-IPython</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-06-the-viewpoint-metatag/"
+       data-tag="HTML"
+       data-author="" >
+        <span class="post-title" title="HTML中meta标签viewpoint的作用">HTML中meta标签viewpoint的作用</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-06-why-use-pip-over-easy-install/"
+       data-tag="Python"
+       data-author="" >
+        <span class="post-title" title="为什么使用pip而不是easy_install">为什么使用pip而不是easy_install</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-15-create-ubuntu-image-for-openstack/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="给OpenStack创建Ubuntu镜像">给OpenStack创建Ubuntu镜像</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-15-different-between-python-package-tools/"
+       data-tag="Python"
+       data-author="" >
+        <span class="post-title" title="python包工具之间的关系">python包工具之间的关系</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-13-openstack-grizzly-multihost-deployment-doc/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="OpenStack Grizzly Multihost部署文档">OpenStack Grizzly Multihost部署文档</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-15-learn-how-to-use-distutils/"
+       data-tag="Python"
+       data-author="" >
+        <span class="post-title" title="学习使用python打包工具distutils">学习使用python打包工具distutils</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-16-deploy-openstack-grizzly-in-virtual-machine/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="在虚拟机单机部署OpenStack Grizzly">在虚拟机单机部署OpenStack Grizzly</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-19-what-is-wsgi/"
+       data-tag="Python"
+       data-author="" >
+        <span class="post-title" title="WSGI学习">WSGI学习</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-05-27-openstack-horizon-locale/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="OpenStack Horizon 中文本地化">OpenStack Horizon 中文本地化</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-06-07-learn-python-setuptools-in-detail/"
+       data-tag="Python"
+       data-author="" >
+        <span class="post-title" title="Python包管理工具setuptools详解">Python包管理工具setuptools详解</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-06-09-learn-python-abc-module/"
+       data-tag="Python"
+       data-author="" >
+        <span class="post-title" title="学习Python的ABC模块">学习Python的ABC模块</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-06-09-learn-python-stevedore-module-in-detail/"
+       data-tag="Python"
+       data-author="" >
+        <span class="post-title" title="学习Python动态扩展包stevedore">学习Python动态扩展包stevedore</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-06-11-pipeline-of-openstack-ceilometer/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="OpenStack Ceilometer Pipeline代码解读">OpenStack Ceilometer Pipeline代码解读</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-06-11-hacking-in-openstack-ceilometer-compute-agent/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="OpenStack Ceilometer Agent源码解读">OpenStack Ceilometer Agent源码解读</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-06-12-hacking-in-openstack-ceilometer-api/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="OpenStack Ceilometer数据与API源码详解">OpenStack Ceilometer数据与API源码详解</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-06-12-hacking-in-openstack-ceilometer-collector/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="OpenStack Ceilometer Collector代码解读">OpenStack Ceilometer Collector代码解读</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-10-01-deploy-ceilometer-of-openstack/"
+       data-tag="OpenStack"
+       data-author="" >
+        <span class="post-title" title="部署Ceilometer到已有环境中">部署Ceilometer到已有环境中</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2013-12-08-implemention-of-breadcrumbs-by-css3/"
+       data-tag="CSS"
+       data-author="" >
+        <span class="post-title" title="基于CSS3实现尖角面包屑">基于CSS3实现尖角面包屑</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-01-16-php-namespace-and-autoload/"
+       data-tag="PHP"
+       data-author="" >
+        <span class="post-title" title="PHP命名空间及自动加载">PHP命名空间及自动加载</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-01-24-apache-log-format/"
+       data-tag="Apache"
+       data-author="" >
+        <span class="post-title" title="Apache 日志文件格式及简单处理">Apache 日志文件格式及简单处理</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-01-17-python-script-of-sae-log-download/"
+       data-tag="Python"
+       data-author="" >
+        <span class="post-title" title="Python脚本--下载合并SAE日志">Python脚本--下载合并SAE日志</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-01-25-how-to-use-php-socket/"
+       data-tag="PHP"
+       data-author="" >
+        <span class="post-title" title="PHP Socket的使用">PHP Socket的使用</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-01-30-understanding-the-github-workflow/"
+       data-tag="Git"
+       data-author="" >
+        <span class="post-title" title="了解GitHub工作流【译】">了解GitHub工作流【译】</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-02-15-apache-and-nginx/"
+       data-tag="Apache,Nginx"
+       data-author="" >
+        <span class="post-title" title="从运行原理及使用场景看Apache和Nginx">从运行原理及使用场景看Apache和Nginx</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-03-10-grunt-bower-and-laravel/"
+       data-tag="PHP,Laravel"
+       data-author="" >
+        <span class="post-title" title="用Laravel+Grunt+Bower管理你的应用">用Laravel+Grunt+Bower管理你的应用</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-03-20-use-other-libraries-in-laravel/"
+       data-tag="PHP,Laravel"
+       data-author="" >
+        <span class="post-title" title="在Laravel中使用自己的类库三种方式">在Laravel中使用自己的类库三种方式</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-04-11-redis-queue-in-laravel/"
+       data-tag="Laravel"
+       data-author="" >
+        <span class="post-title" title="Laravel中用Redis来做任务队列">Laravel中用Redis来做任务队列</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-03-22-managing-your-larrvel-queue-by-supervisor/"
+       data-tag="PHP,Laravel"
+       data-author="" >
+        <span class="post-title" title="使用Supervisor来管理你的Laravel队列">使用Supervisor来管理你的Laravel队列</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-04-16-insert-large-number-of-data-in-mysql/"
+       data-tag="MySQL"
+       data-author="" >
+        <span class="post-title" title="MySQL大量数据插入方法性能分析比较">MySQL大量数据插入方法性能分析比较</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-04-23-roc-curve/"
+       data-tag="Concept"
+       data-author="" >
+        <span class="post-title" title="ROC曲线">ROC曲线</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-05-04-set-environment-variables-of-server-for-php/"
+       data-tag="PHP,Apache,Nginx"
+       data-author="" >
+        <span class="post-title" title="设置PHP服务器Apache和Nginx环境变量">设置PHP服务器Apache和Nginx环境变量</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-04-27-magic-methods-and-magic-constants-in-php/"
+       data-tag="PHP"
+       data-author="" >
+        <span class="post-title" title="PHP中的魔术方法和魔术常量简介和使用">PHP中的魔术方法和魔术常量简介和使用</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-09-26-use-old-version-of-brew-php/"
+       data-tag="PHP,Mac"
+       data-author="" >
+        <span class="post-title" title="回退Mac上用Brew安装的PHP版本">回退Mac上用Brew安装的PHP版本</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-12-06-ioc-and-facade-in-laravel/"
+       data-tag="PHP,Laravel"
+       data-author="" >
+        <span class="post-title" title="Laravel核心之IOC和Facade">Laravel核心之IOC和Facade</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2015-01-08-conflict-between-camel-and-snake-in-laravel/"
+       data-tag="PHP,Laravel"
+       data-author="" >
+        <span class="post-title" title="Laravel关联模型名称一致性问题">Laravel关联模型名称一致性问题</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2015-09-07-sort-algorithms/"
+       data-tag="算法"
+       data-author="" >
+        <span class="post-title" title="七种常见经典排序算法总结（C++实现）">七种常见经典排序算法总结（C++实现）</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2017-02-19-setup-react-environment/"
+       data-tag="React"
+       data-author="" >
+        <span class="post-title" title="React 学习 - 开发环境搭建">React 学习 - 开发环境搭建</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+    <a  class="技术 "
+       href="/2017/06/20/tech/2014-04-19-design-patterns-of-php/"
+       data-tag="PHP,Pattern"
+       data-author="" >
+        <span class="post-title" title="设计模式详解及PHP实现">设计模式详解及PHP实现</span>
+        <span class="post-date" title="2017-06-20 15:24:10">2017/06/20</span>
+    </a>
+    
+</nav>
+    </div>
+</aside>
+<div class="post">
+    <div class="pjax">
+        <article id="post-tool/2017-02-21-docker-summary" class="article article-type-post" itemscope itemprop="blogPost">
+    
+        <h1 class="article-title">Docker 使用总结</h1>
+    
+    <div class="article-meta">
+        
+        
+        
+        <span class="book">
+            
+            <a href="javascript:" data-rel="工具">工具</a>
+            
+        </span>
+        
+        
+        <span class="tag">
+            
+            <a href="javascript:" class="color2">Docker</a>
+            
+        </span>
+        
+    </div>
+    <div class="article-meta">
+        
+        创建时间:<time class="date" title='更新时间: 2017-06-20 14:35:12'>2017-06-20 15:24</time>
+        
+    </div>
+    <div class="article-meta">
+        
+        
+        <span id="busuanzi_container_page_pv">
+            阅读:<span id="busuanzi_value_page_pv"></span>
+        </span>
+        
+        
+        <span class="top-comment" title="跳转至评论区"><a href="#comments">评论:<span class="count-comment"></span></a></span>
+        
+    </div>
+    
+    <div class="toc-ref">
+    
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker-基本概念"><span class="toc-text">Docker 基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#镜像-Image"><span class="toc-text">镜像 Image</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#容器-Container"><span class="toc-text">容器 Container</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#容器启动过程"><span class="toc-text">容器启动过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker-常用命令"><span class="toc-text">Docker 常用命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Image-操作"><span class="toc-text">Image 操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#基本操作"><span class="toc-text">基本操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#制作镜像"><span class="toc-text">制作镜像</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#迁移镜像"><span class="toc-text">迁移镜像</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Container-操作"><span class="toc-text">Container 操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#显示相关"><span class="toc-text">显示相关</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#运行相关"><span class="toc-text">运行相关</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#修改容器"><span class="toc-text">修改容器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#链接容器"><span class="toc-text">链接容器</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#仓库操作"><span class="toc-text">仓库操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dockerfile-常用命令"><span class="toc-text">Dockerfile 常用命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#FROM"><span class="toc-text">FROM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RUN"><span class="toc-text">RUN</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#COPY"><span class="toc-text">COPY</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CMD"><span class="toc-text">CMD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ENTRYPOINT"><span class="toc-text">ENTRYPOINT</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ENV"><span class="toc-text">ENV</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ARG"><span class="toc-text">ARG</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#VOLUME"><span class="toc-text">VOLUME</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#EXPOSE"><span class="toc-text">EXPOSE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WORKDIR"><span class="toc-text">WORKDIR</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#USER"><span class="toc-text">USER</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HEALTHCHECK"><span class="toc-text">HEALTHCHECK</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ONBUILD"><span class="toc-text">ONBUILD</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker-compose-常用指令"><span class="toc-text">Docker-compose 常用指令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#depends-on"><span class="toc-text">depends_on</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#links"><span class="toc-text">links</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实例操作"><span class="toc-text">实例操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建一个LAMP的项目"><span class="toc-text">创建一个LAMP的项目</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#问题记录"><span class="toc-text">问题记录</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Mysql-挂载-volume-后启动时显示无权限"><span class="toc-text">Mysql 挂载 volume 后启动时显示无权限</span></a></li></ol></li></ol>
+    
+<style>
+    .left-col .switch-btn,
+    .left-col .switch-area {
+        display: none;
+    }
+    .toc-level-3 i,
+    .toc-level-3 ol {
+        display: none !important;
+    }
+</style>
+</div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Docker-基本概念"><a href="#Docker-基本概念" class="headerlink" title="Docker 基本概念"></a>Docker 基本概念</h2><h3 id="镜像-Image"><a href="#镜像-Image" class="headerlink" title="镜像 Image"></a>镜像 Image</h3><p>镜像是一些打包好的已有的环境，可以被用来启动和创建容器，本身不能被直接修改。</p>
+<h3 id="容器-Container"><a href="#容器-Container" class="headerlink" title="容器 Container"></a>容器 Container</h3><p>容器是镜像的实例化，是可以修改的，但是都是临时修改。</p>
+<h3 id="容器启动过程"><a href="#容器启动过程" class="headerlink" title="容器启动过程"></a>容器启动过程</h3><ol>
+<li>检查本地是否存在指定的镜像，不存在就从公有仓库下载</li>
+<li>利用镜像创建并启动一个容器</li>
+<li>分配一个文件系统，并在只读的镜像层外面挂载一层可读写层</li>
+<li>从宿主主机配置的网桥接口中桥接一个虚拟接口到容器中去</li>
+<li>从地址池配置一个 ip 地址给容器</li>
+<li>执行用户指定的应用程序</li>
+<li>执行完毕后容器被终止</li>
+</ol>
+<h2 id="Docker-常用命令"><a href="#Docker-常用命令" class="headerlink" title="Docker 常用命令"></a>Docker 常用命令</h2><h3 id="Image-操作"><a href="#Image-操作" class="headerlink" title="Image 操作"></a>Image 操作</h3><h4 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h4><ul>
+<li>显示本地所有镜像</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker images</div></pre></td></tr></table></figure>
+<ul>
+<li>搜索一个image</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker search image_name</div></pre></td></tr></table></figure>
+<ul>
+<li>下载image</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker pull image_name</div></pre></td></tr></table></figure>
+<ul>
+<li>删除镜像</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker rmi image_name</div></pre></td></tr></table></figure>
+<ul>
+<li>显示镜像历史</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker history image_name</div></pre></td></tr></table></figure>
+<h4 id="制作镜像"><a href="#制作镜像" class="headerlink" title="制作镜像"></a>制作镜像</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker build -t image_name DockerfilePath</div></pre></td></tr></table></figure>
+<p>这里DockerfilePath是Context上下文目录，在创建的时候会全部上传到Docker Server端，所以这个目录不要太大</p>
+<h4 id="迁移镜像"><a href="#迁移镜像" class="headerlink" title="迁移镜像"></a>迁移镜像</h4><ul>
+<li>保存镜像到文件</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker save image_name -o file.tar</div></pre></td></tr></table></figure>
+<ul>
+<li>加载一个tar包的镜像</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker load -i file.tar</div></pre></td></tr></table></figure>
+<h3 id="Container-操作"><a href="#Container-操作" class="headerlink" title="Container 操作"></a>Container 操作</h3><h4 id="显示相关"><a href="#显示相关" class="headerlink" title="显示相关"></a>显示相关</h4><ul>
+<li>查看运行中的容器</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">docker ps</div><div class="line"></div><div class="line"># 一行显示全部容器</div><div class="line">docker ps | less -S</div><div class="line"></div><div class="line"># 最近一次启动</div><div class="line">docker ps -l</div><div class="line"></div><div class="line"># 列出所有容器</div><div class="line">docker ps -a</div></pre></td></tr></table></figure>
+<ul>
+<li>显示一个运行的容器里面的进程信息</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker top cid</div></pre></td></tr></table></figure>
+<ul>
+<li>显示容器详细信息</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker inspect cid</div></pre></td></tr></table></figure>
+<ul>
+<li>查看容器日志</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">docker logs cid</div><div class="line"></div><div class="line"># 实时查看日志输出</div><div class="line">docker logs -f cid</div></pre></td></tr></table></figure>
+<ul>
+<li>查看容器更改</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker diff cid</div></pre></td></tr></table></figure>
+<ul>
+<li>查看容器root用户密码</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker logs cid 2&gt;&amp;1 | grep &apos;^User: &apos; | tail -n1</div></pre></td></tr></table></figure>
+<h4 id="运行相关"><a href="#运行相关" class="headerlink" title="运行相关"></a>运行相关</h4><ul>
+<li>启动容器并执行一个命令（交互）</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"># -t 终端</div><div class="line"># -i 交互操作</div><div class="line">docker run -it ubuntu /bin/bash</div><div class="line"></div><div class="line"># 运行一个hello word然后就自动关闭</div><div class="line">docker run image_name echo &quot;hello word&quot;</div><div class="line"></div><div class="line"># 命名并启动容器</div><div class="line">docker run --name test ubuntu</div><div class="line"></div><div class="line"># 后台运行一个容器</div><div class="line">docker run -d -it ubuntu</div><div class="line"></div><div class="line"># 映射端口</div><div class="line">docker run -p 8080:8080 ubuntu</div><div class="line"></div><div class="line"># 挂载volumn</div><div class="line">docker run -v ./test:/var/www</div><div class="line"></div><div class="line"># container 内 root 拥有真正root权限</div><div class="line">docker run --privileged=false</div><div class="line"></div><div class="line"># 启动完镜像后自动删除</div><div class="line">docker run -it --rm ubuntu bash</div></pre></td></tr></table></figure>
+<ul>
+<li>附着到正在运行的容器, 附着完以后退出会导致容器也终止</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker attach cid</div></pre></td></tr></table></figure>
+<ul>
+<li>进入正在运行的 container 并且执行</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker exec -it 839a6cfc9496 /bin/bash</div></pre></td></tr></table></figure>
+<ul>
+<li>在容器中运行一段程序</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run ubuntu apt-get update</div></pre></td></tr></table></figure>
+<ul>
+<li>拷贝文件出来</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker cp cid:/container_path to_path</div></pre></td></tr></table></figure>
+<h4 id="修改容器"><a href="#修改容器" class="headerlink" title="修改容器"></a>修改容器</h4><p>image相当于类，container相当于实例，不过可以动态给实例安装新软件，然后把这个container用commit命令固化成一个image</p>
+<ul>
+<li>提交一个commit</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker commit cid new_image_name</div></pre></td></tr></table></figure>
+<ul>
+<li>删除容器</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">docker rm cid</div><div class="line"></div><div class="line"># 强制删除</div><div class="line">docker rm -f cid</div><div class="line"></div><div class="line"># 删除所有容器</div><div class="line">docker rm `docker ps -a -q`</div></pre></td></tr></table></figure>
+<ul>
+<li>状态修改</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker start/stop/kill/restart cid</div></pre></td></tr></table></figure>
+<ul>
+<li>更改名字</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker rename old new</div></pre></td></tr></table></figure>
+<h4 id="链接容器"><a href="#链接容器" class="headerlink" title="链接容器"></a>链接容器</h4><p>sonar容器连接到mysql容器，并将mysql容器重命名为db。这样，sonar容器就可以使用db的相关的环境变量了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -it --name sonar -d -link mysql:db tpires/sonar-server</div></pre></td></tr></table></figure>
+<h3 id="仓库操作"><a href="#仓库操作" class="headerlink" title="仓库操作"></a>仓库操作</h3><ul>
+<li>登录到docker仓库</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker login</div></pre></td></tr></table></figure>
+<ul>
+<li>上传镜像</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker push new_image_name</div></pre></td></tr></table></figure>
+<h2 id="Dockerfile-常用命令"><a href="#Dockerfile-常用命令" class="headerlink" title="Dockerfile 常用命令"></a>Dockerfile 常用命令</h2><p>有了 Dockerfile 可以自定义一些自己需要的镜像，在熟悉了 Docker 基本操作，然后使用过一些别人提供好的镜像以后，难免需要自己修改一部分。</p>
+<h3 id="FROM"><a href="#FROM" class="headerlink" title="FROM"></a>FROM</h3><p>指定基础镜像。例如：</p>
+<ul>
+<li>ubuntu</li>
+<li>nginx</li>
+<li>redis</li>
+<li>…</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">FROM nginx</div></pre></td></tr></table></figure>
+<h3 id="RUN"><a href="#RUN" class="headerlink" title="RUN"></a>RUN</h3><p>执行一些命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">RUN echo &apos;&lt;h1&gt;Hello, Docker!&lt;/h1&gt;&apos; &gt; /usr/share/nginx/html/index.html</div></pre></td></tr></table></figure>
+<p>每个RUN命令都会在容器中建立一层，所以尽量合并多个命令。例如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">RUN buildDeps=&apos;gcc libc6-dev make&apos; \</div><div class="line">    &amp;&amp; apt-get update \</div><div class="line">    &amp;&amp; apt-get install -y $buildDeps \</div><div class="line">    ...</div></pre></td></tr></table></figure>
+<h3 id="COPY"><a href="#COPY" class="headerlink" title="COPY"></a>COPY</h3><p>复制文件到指定目录 source -&gt; target</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">COPY ./package.json /usr/src/app</div></pre></td></tr></table></figure>
+<h3 id="CMD"><a href="#CMD" class="headerlink" title="CMD"></a>CMD</h3><p>容器的启动命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">CMD [&quot;nginx&quot;, &quot;-g&quot;, &quot;daemon off;&quot;]</div></pre></td></tr></table></figure>
+<p>这个命令可以在启动时被覆盖。另外它也可以为 ENTRYPOINT 提供参数。</p>
+<blockquote>
+<p>CMD 理论上只能执行一次，如果想要执行两个命令，需要使用 <code>&amp;</code> 来连接两个命令，或者使用一个bash文件。更为高级一点的方法是用supervisor来管理</p>
+</blockquote>
+<h3 id="ENTRYPOINT"><a href="#ENTRYPOINT" class="headerlink" title="ENTRYPOINT"></a>ENTRYPOINT</h3><p>ENTRYPOINT 和 CMD 有一部分重复工作，但是 ENTRYPOINT 可以让容器像软件一样执行。例如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ENTRYPOINT /bin/echo</div></pre></td></tr></table></figure>
+<p>在容器启动时，之后增加的内容都属于这个命令的参数。</p>
+<h3 id="ENV"><a href="#ENV" class="headerlink" title="ENV"></a>ENV</h3><p>设置环境变量。</p>
+<p><code>ENV key value</code></p>
+<h3 id="ARG"><a href="#ARG" class="headerlink" title="ARG"></a>ARG</h3><p>构建参数，在容器启动后不会存在。</p>
+<h3 id="VOLUME"><a href="#VOLUME" class="headerlink" title="VOLUME"></a>VOLUME</h3><p>定义匿名卷，以免用户忘了挂载volumn，导致大量写入。这个 Volume 在容器启动前可以添加内容，但是并不是实际操作用户挂载的内容。在用户挂载完 volume 后，原来写在这里的内容会被复制到用户挂载的目录。</p>
+<blockquote>
+<p>注意：在 VOLUME 命令之后对这个目录的所有操作，将被忽略。</p>
+</blockquote>
+<h3 id="EXPOSE"><a href="#EXPOSE" class="headerlink" title="EXPOSE"></a>EXPOSE</h3><p>申明端口，可以用来默认映射端口，以及容器间互通。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">EXPOSE 22 80</div></pre></td></tr></table></figure>
+<h3 id="WORKDIR"><a href="#WORKDIR" class="headerlink" title="WORKDIR"></a>WORKDIR</h3><p>指定工作目录。不仅是当前 docker 中的目录，同时也是运行容器时刚刚登录以后的目录。</p>
+<h3 id="USER"><a href="#USER" class="headerlink" title="USER"></a>USER</h3><p>指定当前用户。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">RUN groupadd -r redis &amp;&amp; useradd -r -g redis redis</div><div class="line">USER redis</div><div class="line">RUN [ &quot;redis-server&quot; ]</div></pre></td></tr></table></figure>
+<h3 id="HEALTHCHECK"><a href="#HEALTHCHECK" class="headerlink" title="HEALTHCHECK"></a>HEALTHCHECK</h3><p>健康检查</p>
+<h3 id="ONBUILD"><a href="#ONBUILD" class="headerlink" title="ONBUILD"></a>ONBUILD</h3><p>当此容器作为别的容器的基础容器时操作内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">FROM node:slim</div><div class="line">RUN &quot;mkdir /app&quot;</div><div class="line">WORKDIR /app</div><div class="line">ONBUILD COPY ./package.json /app</div><div class="line">ONBUILD RUN [ &quot;npm&quot;, &quot;install&quot; ]</div><div class="line">ONBUILD COPY . /app/</div><div class="line">CMD [ &quot;npm&quot;, &quot;start&quot; ]</div></pre></td></tr></table></figure>
+<h2 id="Docker-compose-常用指令"><a href="#Docker-compose-常用指令" class="headerlink" title="Docker-compose 常用指令"></a>Docker-compose 常用指令</h2><h3 id="depends-on"><a href="#depends-on" class="headerlink" title="depends_on"></a>depends_on</h3><p>这个不仅可以保证build的先后顺序，还可以省去links的设置</p>
+<h3 id="links"><a href="#links" class="headerlink" title="links"></a>links</h3><p>和docker run命令一致，主要原因是在每次新开启container的时候，port可能会变，所以有了这个设置可以保证每次都可以绑定到正确的值。</p>
+<h2 id="实例操作"><a href="#实例操作" class="headerlink" title="实例操作"></a>实例操作</h2><h3 id="创建一个LAMP的项目"><a href="#创建一个LAMP的项目" class="headerlink" title="创建一个LAMP的项目"></a>创建一个LAMP的项目</h3><p>首先是目录结构</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">├── README.md</div><div class="line">├── apache</div><div class="line">│   └── virtualhost.conf</div><div class="line">├── docker-compose.yml</div><div class="line">├── mysql</div><div class="line">│   ├── Dockerfile</div><div class="line">│   └── my.cnf</div><div class="line">├── php</div><div class="line">│   ├── Dockerfile</div><div class="line">│   └── php.ini</div><div class="line">└── src</div><div class="line">    └── index.php</div></pre></td></tr></table></figure>
+<p>创建 docker-compose.yml</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="attr">version:</span> <span class="string">'2'</span></div><div class="line"><span class="attr">services:</span></div><div class="line"><span class="attr">  mysql:</span></div><div class="line"><span class="attr">    image:</span> <span class="string">mysql</span></div><div class="line"><span class="attr">    ports:</span></div><div class="line"><span class="bullet">      -</span> <span class="string">"3306:3306"</span></div><div class="line"><span class="attr">    environment:</span></div><div class="line"><span class="attr">      MYSQL_ROOT_PASSWORD:</span> <span class="string">password</span></div><div class="line"><span class="attr">      MYSQL_DATABASE:</span> <span class="string">phpdata</span></div><div class="line"><span class="attr">      MYSQL_USER:</span> <span class="string">user</span></div><div class="line"><span class="attr">      MYSQL_PASSWORD:</span> <span class="string">password</span></div><div class="line"><span class="attr">    volumes:</span></div><div class="line"><span class="attr">      - dbdata:</span><span class="string">/var/lib/mysql</span></div><div class="line"><span class="attr">  php:</span></div><div class="line"><span class="attr">    build:</span> <span class="string">./php</span></div><div class="line"><span class="attr">    ports:</span></div><div class="line"><span class="bullet">      -</span> <span class="string">'8080:80'</span></div><div class="line"><span class="attr">    volumes:</span></div><div class="line"><span class="bullet">      -</span> <span class="string">./src:/var/www/html</span></div><div class="line"><span class="bullet">      -</span> <span class="string">./apache:/etc/apache2/sites-enabled/</span></div><div class="line"><span class="attr">    depends_on:</span></div><div class="line"><span class="bullet">      -</span> <span class="string">mysql</span></div><div class="line"><span class="attr">  phpmyadmin:</span></div><div class="line"><span class="attr">    image:</span> <span class="string">phpmyadmin/phpmyadmin</span></div><div class="line"><span class="attr">    ports:</span></div><div class="line"><span class="bullet">      -</span> <span class="string">'8081:80'</span></div><div class="line"><span class="attr">    links:</span></div><div class="line"><span class="attr">      - mysql:</span><span class="string">db</span></div><div class="line"><span class="attr">    environment:</span></div><div class="line"><span class="attr">      PMA_USER:</span> <span class="string">root</span></div><div class="line"><span class="attr">      PMA_PASSWORD:</span> <span class="string">password</span></div><div class="line"><span class="attr">    volumes:</span></div><div class="line"><span class="attr">      - adminsessions:</span><span class="string">/sessions</span></div><div class="line"><span class="attr">    depends_on:</span></div><div class="line"><span class="bullet">      -</span> <span class="string">mysql</span></div><div class="line"><span class="bullet">      -</span> <span class="string">php</span></div><div class="line"><span class="attr">volumes:</span></div><div class="line"><span class="attr">  dbdata:</span></div><div class="line"><span class="attr">  adminsessions:</span></div></pre></td></tr></table></figure>
+<h2 id="问题记录"><a href="#问题记录" class="headerlink" title="问题记录"></a>问题记录</h2><h3 id="Mysql-挂载-volume-后启动时显示无权限"><a href="#Mysql-挂载-volume-后启动时显示无权限" class="headerlink" title="Mysql 挂载 volume 后启动时显示无权限"></a>Mysql 挂载 volume 后启动时显示无权限</h3><p>设置mysql的启动模式 <code>privileged:true</code></p>
+<p>另外这个问题一般不会发生，我之前遇到主要原因是我把多个 volume 都映射到了一个上面，导致目录内部读写发生冲突。</p>
+
+      
+    </div>
+</article>
+
+<p>
+    <a href="javascript:void(0)" class="dashang" onclick="dashangToggle()">赏</a>
+</p>
+
+
+<div class="article_copyright">
+    <p><span>文章标题:</span>Docker 使用总结</p>
+    
+    <p><span>本文作者:</span><a href="javascript:void(0)" title="Allen">Allen</a></p>
+    <p><span>发布时间:</span>2017-06-20, 15:24:10</p>
+    <p><span>最后更新:</span>2017-06-20, 14:35:12</p>
+    <span>原始链接:</span><a class="post-url" href="/2017/06/20/tool/2017-02-21-docker-summary/" title="Docker 使用总结">http://yoursite.com/2017/06/20/tool/2017-02-21-docker-summary/</a>
+    <p>
+        <span>版权声明:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+    </p>
+</div>
+
+
+    
+    <section id="comments" class="disqus">
+    <style> aside.comment-bar { margin: auto 30px; }</style>
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function(){
+            this.page.url = 'http://yoursite.com/2017/06/20/tool/2017-02-21-docker-summary/';
+            this.page.identifier = '2017/06/20/tool/2017-02-21-docker-summary/';
+        };
+        var loadComment = function(){
+            var d = document, s = d.createElement('script');
+            s.src = '//yelog.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        }
+    </script>
+    
+    <aside class="comment-bar">
+        <a href="javascript:void(0);">
+            <i class="fa fa-commenting-o animated infinite pulse"></i>
+            <i class="fa fa-spinner fa-pulse"></i>
+            <span class="count-comment"></span>
+        </a>
+    </aside>
+    <script>
+        var isLoadComments = false;
+        var $commentBar = $("#comments aside.comment-bar");
+        var load$hide = function(){
+            if(isLoadComments){
+                return;
+            }
+            isLoadComments = true;
+            if(isLoadComments )
+            $commentBar.find("a > i").toggle();
+            
+            loadComment();
+            
+            $commentBar.fadeOut(800);
+        }
+        $commentBar.click(function(){
+            load$hide();
+        })
+        $commentBar.children("a").mouseenter(function(){
+            load$hide();
+        })
+    </script>
+
+</section>
+
+<!-- Add comment count-->
+<span class="disqus-comment-count" style="display: none" data-disqus-identifier="2017/06/20/tool/2017-02-21-docker-summary/"></span>
+<span class="disqus-comment-count" style="display: none" data-disqus-url="http://yoursite.com/2017/06/20/tool/2017-02-21-docker-summary/"></span>
+    
+
+    </div>
+    <div class="copyright">
+        <p class="footer-entry">©2017 Yelog</p>
+<p class="footer-entry">Buit with <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/yelog/hexo-theme-3-hexo" target="_blank">3-hexo</a> theme</p>
+
+    </div>
+</div>
+<div class="full-toc">
+    <button class="full"><span class="min "></span></button>
+<button class="post-toc-menu"><span class="post-toc-menu-icons"></span></button>
+<div class="post-toc"><span class="post-toc-title">目录</span>
+    <div class="post-toc-content">
+
+    </div>
+</div>
+<a class="" id="rocket" href="javascript:void(0)"></a>
+</div>
+<div class="acParent"></div>
+<div class="hide_box" onclick="dashangToggle()"></div>
+<div class="shang_box">
+    <a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()">×</a>
+    <div class="shang_tit">
+        <p>喜欢就点赞,疼爱就打赏</p>
+    </div>
+    <div class="shang_payimg">
+        <div class="pay_img">
+            <img src="/img/alipay.jpg" class="alipay" title="扫码支持">
+            <img src="/img/weixin.jpg" class="weixin" title="扫码支持">
+        </div>
+    </div>
+    <div class="shang_payselect">
+        <span><label><input type="radio" name="pay" checked value="alipay">支付宝</label></span><span><label><input type="radio" name="pay" value="weixin">微信</label></span>
+    </div>
+</div>
+</body>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.pjax/1.9.6/jquery.pjax.min.js"></script>
+<script src="/js/script.js"></script>
+<script>
+    $(function () {
+        $('.search').AutoComplete({
+            'data': ['#Git','#Bootstrap','#HTML','#PHP','#jQuery','#JavaScript','#Python','#SVN','#MySQL','#Mac','#Shell','#SEO','#Vim','#Windows','#Linux','#Sublime','#Jekyll','#Blog','#MongoDB','#Tool','#Vagrant','#Tools','#Docker','#OpenStack','#Virtualization','#Concept','#CSS','#Apache','#Nginx','#Laravel','#算法','#React','#Pattern',],
+            'itemHeight': 20,
+            'width': 418
+        }).AutoComplete('show');
+    })
+    function initArticle() {
+        
+            $(".post .pjax table").addClass("green_title");
+        
+        
+        $("input[name=pay]").on("click", function () {
+            if($("input[name=pay]:checked").val()=="weixin"){
+                $(".shang_box .shang_payimg .pay_img").addClass("weixin_img");
+            } else {
+                $(".shang_box .shang_payimg .pay_img").removeClass("weixin_img");
+            }
+        })
+        
+        
+        
+        $.getScript("//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js");
+        
+    }
+    
+    function dashangToggle() {
+        $(".shang_box").fadeToggle();
+        $(".hide_box").fadeToggle();
+    }
+    
+</script>
+
+<!--自定义样式设置-->
+<style>
+    
+    .nav-right nav a.hover{
+        background-color: #e2e0e0;
+    }
+    
+    
+
+</style>
+</html>
